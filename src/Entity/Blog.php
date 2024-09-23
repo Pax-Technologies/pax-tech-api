@@ -20,19 +20,31 @@ class Blog
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private ?string $titleFR = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $titleEN = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $creation_date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $subtitle = null;
+    private ?string $subtitleFR = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $domain = null;
+    private ?string $subtitleEN = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $domainFR = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $domainEN = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $content = null;
+    private ?string $contentFR = null; 
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $contentEN = null;
 
     #[Vich\UploadableField(mapping: 'images', fileNameProperty: 'imageName', size: 'imageSize')]
     private ?File $imageFile = null;
@@ -54,14 +66,24 @@ class Blog
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitleFR(): ?string
     {
-        return $this->title;
+        return $this->titleFR;
     }
 
-    public function setTitle(string $title): void
+    public function setTitleFR(string $titleFR): void
     {
-        $this->title = $title;
+        $this->titleFR = $titleFR;
+    }
+
+    public function getTitleEN(): ?string
+    {
+        return $this->titleEN;
+    }
+
+    public function setTitleEN(string $titleEN): void
+    {
+        $this->titleEN = $titleEN;
     }
 
     public function getCreationDate(): ?\DateTimeInterface
@@ -74,34 +96,64 @@ class Blog
         $this->creation_date = $creation_date;
     }
 
-    public function getSubtitle(): ?string
+    public function getSubtitleFR(): ?string
     {
-        return $this->subtitle;
+        return $this->subtitleFR;
     }
 
-    public function setSubtitle(?string $subtitle): void
+    public function setSubtitleFR(?string $subtitleFR): void
     {
-        $this->subtitle = $subtitle;
+        $this->subtitleFR = $subtitleFR;
     }
 
-    public function getDomain(): ?string
+    public function getSubtitleEN(): ?string
     {
-        return $this->domain;
+        return $this->subtitleEN;
     }
 
-    public function setDomain(?string $domain): void
+    public function setSubtitleEN(?string $subtitleEN): void
     {
-        $this->domain = $domain;
+        $this->subtitleEN = $subtitleEN;
     }
 
-    public function getContent(): ?string
+    public function getDomainFR(): ?string
     {
-        return $this->content;
+        return $this->domainFR;
     }
 
-    public function setContent(string $content): void
+    public function setDomainFR(?string $domainFR): void
     {
-        $this->content = $content;
+        $this->domainFR = $domainFR;
+    }
+
+    public function getDomainEN(): ?string
+    {
+        return $this->domainEN;
+    }
+
+    public function setDomainEN(?string $domainEN): void
+    {
+        $this->domainEN = $domainEN;
+    }
+
+    public function getContentFR(): ?string  
+    {
+        return $this->contentFR;
+    }
+
+    public function setContentFR(string $contentFR): void 
+    {
+        $this->contentFR = $contentFR;
+    }
+
+    public function getContentEN(): ?string  
+    {
+        return $this->contentEN;
+    }
+
+    public function setContentEN(string $contentEN): void 
+    {
+        $this->contentEN = $contentEN;
     }
 
     public function getUpdatedAt(): ?\DateTimeImmutable

@@ -37,10 +37,16 @@ class BlogCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            TextField::new('title'),
-            TextField::new('subtitle'),
+            TextField::new('titleFR'),
+            TextField::new('titleEN'),
+            TextField::new('subtitleFR'),
+            TextField::new('subtitleEN'),
+            TextField::new('domainFR'),
+            TextField::new('domainEN'),
             DateField::new('creation_date'),
-            TextareaField::new('content')->setFormType(CKEditorType::class)
+            TextareaField::new('contentFR')->setFormType(CKEditorType::class)
+                ->hideOnIndex(),
+            TextareaField::new('contentEN')->setFormType(CKEditorType::class)
                 ->hideOnIndex(),
             ImageField::new('image_name')
                 ->setBasePath('uploaded/images')
