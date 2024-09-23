@@ -1,5 +1,6 @@
 api_platform:
-    title: Hello API Platform
+    asset_package: 'api_platform'
+    title: Pax Technologies API Platform
     version: 1.0.0
     formats:
         jsonld: ['application/ld+json']

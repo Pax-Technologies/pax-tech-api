@@ -31,12 +31,7 @@ class BlogCrudController extends AbstractCrudController
                 ->setUploadedFileNamePattern('[randomhash].[extension]')
                 ->setRequired(false)
                 ->setLabel('Image'),
-            ImageField::new('cover_image_name')
-                ->setBasePath('uploaded/covers')
-                ->setUploadDir('public/uploaded/covers')
-                ->setUploadedFileNamePattern('[randomhash].[extension]')
-                ->setRequired(false)
-                ->setLabel('Cover'),
+            TextField::new('source')
         ];
     }
 

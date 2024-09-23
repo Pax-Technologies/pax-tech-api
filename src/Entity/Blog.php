@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use ApiPlatform\Metadata\ApiResource;
 
-#[ApiResource]
+#[ApiResource(paginationItemsPerPage: 3)]
 #[ORM\Entity(repositoryClass: BlogRepository::class)]
 #[Vich\Uploadable]
 class Blog
@@ -34,15 +34,6 @@ class Blog
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
-    #[Vich\UploadableField(mapping: 'covers', fileNameProperty: 'coverImageName', size: 'coverImageSize')]
-    private ?File $coverImageFile = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?string $coverImageName = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $coverImageSize = null;
-
     #[Vich\UploadableField(mapping: 'images', fileNameProperty: 'imageName', size: 'imageSize')]
     private ?File $imageFile = null;
 
@@ -54,6 +45,9 @@ class Blog
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $source = null;
 
     public function getId(): ?int
     {
@@ -120,39 +114,6 @@ class Blog
         $this->updatedAt = $updatedAt;
     }
 
-    public function setCoverImageFile(?File $coverImageFile = null): void
-    {
-        $this->coverImageFile = $coverImageFile;
-
-        if (null !== $coverImageFile) {
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-    }
-
-    public function getCoverImageFile(): ?File
-    {
-        return $this->coverImageFile;
-    }
-
-    public function setCoverImageName(?string $coverImageName): void
-    {
-        $this->coverImageName = $coverImageName;
-    }
-
-    public function getCoverImageName(): ?string
-    {
-        return $this->coverImageName;
-    }
-
-    public function setCoverImageSize(?int $coverImageSize): void
-    {
-        $this->coverImageSize = $coverImageSize;
-    }
-
-    public function getCoverImageSize(): ?int
-    {
-        return $this->coverImageSize;
-    }
 
     public function setImageFile(?File $imageFile = null): void
     {
@@ -186,5 +147,17 @@ class Blog
     public function getImageSize(): ?int
     {
         return $this->imageSize;
+    }
+
+    public function getSource(): ?string
+    {
+        return $this->source;
+    }
+
+    public function setSource(?string $source): static
+    {
+        $this->source = $source;
+
+        return $this;
     }
 }
