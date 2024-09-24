@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use App\Repository\BlogRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,6 +18,7 @@ class Blog
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+#[ApiProperty(identifier: false)]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -60,6 +62,10 @@ class Blog
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $source = null;
+
+    #[ORM\Column(length: 255, unique: true)]
+    #[ApiProperty(identifier: true)]
+    private ?string $slug = null;
 
     public function getId(): ?int
     {
@@ -211,5 +217,38 @@ class Blog
         $this->source = $source;
 
         return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setSlugFromTitle(): void
+    {
+        $slug = $this->slugify($this->getTitleEN());
+        while (null !== $existingBlog = $this->getBlogRepository()->findOneBy(['slug' => $slug])) {
+            if ($existingBlog === $this) {
+                break;
+            }
+            $slug .= '-' . uniqid();
+        }
+        $this->slug = $slug;
+    }
+
+    private function slugify(string $string): string
+    {
+        return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $string), '-'));
     }
 }
