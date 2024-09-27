@@ -1,0 +1,21 @@
+// Variables pour le thème sombre
+$dark-color: #333;
+$dark-color-light: lighten($dark-color, 5%);
+$light-color: #f8f9fa;
+$light-color-dark: darken($light-color, 5%);
+
+// Configuration des variables Bootstrap pour le thème sombre
+$body-bg: $dark-color;
+$body-color: $light-color;
+
+$component-active-bg: $dark-color-light;
+$component-active-color: $light-color;
+
+$border-color: $light-color-dark;
+
+$dropdown-bg: $dark-color;
+$dropdown-border-color: $light-color-dark;
+
+$primary: #00bc70;
+
+@import "bootstrap";
