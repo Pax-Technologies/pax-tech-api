@@ -3,7 +3,7 @@
 {% block title %}Se connecter !{% endblock %}
 
 {% block body %}
-    <div class="container d-flex flex-column justify-content-center" style="height: 100vh;">
+    <div class="container d-flex flex-column justify-content-center" style="height: 95vh;">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
@@ -33,7 +33,7 @@
 
                             <div class="mb-3">
                                 <label for="inputPassword" class="form-label">Mot de passe</label>
-                                <input type="password" name="password" id="inputPassword" class="form-control"
+                                <input type="password" name="_password" id="inputPassword" class="form-control"
                                        autocomplete="current-password" required>
                             </div>
 
@@ -56,6 +56,13 @@
                     </div>
                 </div>
             </div>
-        </div>
+
+
     </div>
+    <footer class="bg-light text-center text-lg-start" style="height: 5vh">
+        <div class="text-center p-4" style="background-color: #0a0a0a">
+            Copyright &copy; {{ "now"|date("Y") }}. All right reserved by Pax Technologies
+        </div>
+    </footer>
+
 {% endblock %}
