@@ -6,21 +6,23 @@
 {% endblock %}
 
 {% block main %}
-    <h1>Dashboard</h1>
-    <div class="row">
-        {#        {% for reservationCount in reservationsCount %}#}
-        {#            <div class="col-3">#}
-        {#                <div class="card">#}
-        {#                    <div class="card-header">#}
-        {#                        {{ reservationCount.retreat }}#}
-        {#                    </div>#}
-        {#                    <div class="card-body">#}
-        {#                        <b>{{ reservationCount.count }}</b> reservations<br>#}
-        {#                        <b>{{ reservationCount.participants }}</b> participants<br>#}
-        {#                        <b>{{ reservationCount.rooms }}</b> rooms#}
-        {#                    </div>#}
-        {#                </div>#}
-        {#            </div>#}
-        {#        {% endfor %}#}
+    <div class="container">
+        <h1>Console d'administration</h1>
+        <div class="row mt-4">
+            {# Formulaire d'envoi d'email de configuration #}
+            <div class="col-6 card border-white">
+                <h4 class="card-header">Envoyer les instructions pour les emails</h4>
+                <div class="card-body">
+                    <form id="email-form" action="{{ path('send_email_route') }}" method="post">
+                        <div class="form-group">
+                            <input type="email" name="email" class="form-control" placeholder="Adresse Email" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <button form="email-form" type="submit" class="btn btn-primary">Envoyer</button>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
