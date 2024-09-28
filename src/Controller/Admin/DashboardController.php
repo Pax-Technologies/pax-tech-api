@@ -64,7 +64,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('<img src="Logos/Web/PNG/RGB Negatif/300/PaxTech-Horizontal-Negatif-RGB-300[Cropped].png" height="75">')
+            ->setTitle('<img src="public/Logos/Web/PNG/RGB Negatif/300/PaxTech-Horizontal-Negatif-RGB-300[Cropped].png" height="75">')
             ->setFaviconPath('favicon.ico')
         ;
     }
@@ -78,6 +78,6 @@ class DashboardController extends AbstractDashboardController
 
     public function configureAssets(): Assets
     {
-        return Assets::new()->addCssFile('styles/admin.styles');
+        return Assets::new()->addCssFile('styles/admin.css');
     }
 }
