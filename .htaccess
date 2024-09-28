@@ -21,6 +21,7 @@ DirectoryIndex public/index.php
      RewriteRule ^assets/bundles/(.*)$ /public/assets/bundles/$1 [L]
      # Rewrites "/bundles/...
      RewriteRule ^bundles/(.*)$ /public/bundles/$1 [L]
+     RewriteRule ^build/(.*)$ /public/build/$1 [L]
 
      # ... other directories that you needs
      # RewriteRule ^another-directory/(.*)$ /public/another-directory/$1 [L]
