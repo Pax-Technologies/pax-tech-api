@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Client;
 use App\Entity\Invoice;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -35,8 +36,8 @@ class InvoiceType extends AbstractType
                 'data' => 2
             ])
             ->add('client', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'id',
+                'class' => Client::class,
+                'choice_label' => 'company',
             ])
             ->add('invoiceDetails', CollectionType::class, [
                 'entry_type' => InvoiceDetailType::class,
@@ -44,6 +45,7 @@ class InvoiceType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
                 'prototype' => true,
+                'label' =>false,
             ]);
     }
 

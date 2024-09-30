@@ -23,7 +23,7 @@ class Invoice
 
     #[ORM\ManyToOne(inversedBy: 'totalAmountNet')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $client = null;
+    private ?Client $client = null;
 
     #[ORM\Column]
     private ?float $totalAmountNet = null;
@@ -68,12 +68,12 @@ class Invoice
         return $this;
     }
 
-    public function getClient(): ?User
+    public function getClient(): ?Client
     {
         return $this->client;
     }
 
-    public function setClient(?User $client): static
+    public function setClient(?Client $client): static
     {
         $this->client = $client;
 
