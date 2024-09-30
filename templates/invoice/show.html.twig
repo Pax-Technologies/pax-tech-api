@@ -26,7 +26,7 @@
     </style>
     <div class="container">
         <h1 class="my-4">Facture n°{{ invoice.invoiceNumber }}</h1>
-
+        <a href="{{ path('print_invoice', {'id': invoice.id}) }}">Imprimer la facture</a>
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">

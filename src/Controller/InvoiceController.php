@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Dompdf\Dompdf;
+use Knp\Snappy\Pdf;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,5 +43,19 @@ class InvoiceController extends AbstractController
         return $this->render('invoice/show.html.twig', [
             'invoice' => $invoice,
         ]);
+    }
+
+    #[Route('invoice/pdf/{id}', 'print_invoice')]
+    public function pdfAction(Invoice $invoice, Pdf $snappy)
+    {
+
+        // Génère votre vue Twig
+        $html = $this->renderView('invoice/show.html.twig', [
+            'invoice' => $invoice,
+        ]);
+
+        $snappy->generateFromHtml($html, '/home/u180592966/domains/pax-tech.com/public_html/api/file.pdf');
+
+        return new Response('File has been saved');
     }
 }
