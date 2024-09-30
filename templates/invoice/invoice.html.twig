@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une facture{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-4">Créer une nouvelle facture</h1>
+
+        {{ form_start(invoiceForm, {'attr': {'class': 'mb-4'}}) }}
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div class="row justify-content-between">
+                            <div class="col-md-3">
+                                {{ form_row(invoiceForm.date, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form_row(invoiceForm.status, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+                        <div class="row justify-content-end">
+                            <div class="col-md-3">
+                    {{ form_row(invoiceForm.invoiceNumber, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(invoiceForm.client, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            <div class="col-md-6">
+                                <!-- Champs pour afficher les détails du client -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h2>Détails de la facture</h2>
+
+                        <div id="invoice-details" class="mb-3" data-prototype="{{ form_widget(invoiceForm.invoiceDetails.vars.prototype)|e('html_attr') }}">
+                        {% for detailForm in invoiceForm.invoiceDetails %}
+                        <div class="mb-3">
+                            {{ form_label(detailForm.description) }}
+                            {{ form_errors(detailForm.description) }}
+                            {{ form_widget(detailForm.description, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        {{ form_row(detailForm.unitPriceExcl, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_row(detailForm.quantity, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_row(detailForm.totalExcl, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_row(detailForm.vatRate, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_row(detailForm.totalIncl, {'attr': {'class': 'form-control'}}) }}
+                        <!-- Ajoutez ici tous les autres champs nécessaires pour les détails de la facture -->
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer">
+                        {{ form_row(invoiceForm.totalAmountNet, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(invoiceForm.totalVatAmount, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(invoiceForm.totalAmountGross, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <button type="button" class="btn btn-primary mb-4" id="add-invoice-detail">Ajouter un détail</button>
+               </div>
+
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">Créer une facture</button>
+        {{ form_end(invoiceForm) }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var $wrapper = document.querySelector('#invoice-details');
+            var index = $wrapper.dataset.index;
+
+            document.querySelector('#add-invoice-detail').addEventListener('click', function() {
+                var prototype = $wrapper.dataset.prototype;
+                var newFormHtml = prototype.replace(/__name__/g, index);
+
+                var $newFormDiv = document.createElement('div');
+                $newFormDiv.className = 'card mb-3';
+
+                var $newFormCardBody = document.createElement('div');
+                $newFormCardBody.className = 'card-body';
+
+                $newFormCardBody.innerHTML = newFormHtml;
+                $newFormDiv.appendChild($newFormCardBody);
+
+                $wrapper.appendChild($newFormDiv);
+
+                // Nouvelle fonction pour ajouter les classes
+                Array.from($newFormCardBody.querySelectorAll('input, select, textarea')).forEach(function(input) {
+                    input.classList.add('form-control');
+                });
+
+                index++;
+            });
+        });
+    </script>
+{% endblock %}
