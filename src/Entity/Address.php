@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\AdresRepository;
+use App\Repository\AddressRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AdresRepository::class)]
-class Adres
+#[ORM\Entity(repositoryClass: AddressRepository::class)]
+class Address
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -39,7 +39,7 @@ class Adres
     /**
      * @var Collection<int, Client>
      */
-    #[ORM\ManyToMany(targetEntity: Client::class, inversedBy: 'adres')]
+    #[ORM\ManyToMany(targetEntity: Client::class, inversedBy: 'address')]
     private Collection $client;
 
     public function __construct()

@@ -25,7 +25,7 @@
         }
     </style>
     <div class="container">
-        <h1 class="my-4">Créer une nouvelle facture</h1>
+        <h1 class="my-4">Nouvelle facture</h1>
 
         {{ form_start(invoiceForm, {'attr': {'class': 'mb-4'}}) }}
 
@@ -46,13 +46,39 @@
                                 {{ form_row(invoiceForm.invoiceNumber, {'attr': {'class': 'form-control border border-black', 'readonly': 'readonly'}, 'label_attr': {'class': 'text-white-50 mb-2'}}) }}
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-4 d-flex flex-column mt-4">
+                        <div class="row mt-4">
+
+                            <div class="col-md-4 d-flex flex-column">
 
                                     {{ form_row(invoiceForm.client, {'attr': {'class': 'form-control mb-2'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
                                     <input type="text" id="vatNumber" class="form-control mb-2 border border-black" readonly>
                                     <input type="text" id="phone" class="form-control mb-2 border border-black" readonly>
                                     <input type="text" id="email" class="form-control mb-2 border border-black" readonly>
+
+                            </div>
+                            <div class="col-md-7 mt-4">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <input type="text" id="houseNumber" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                    <div class="col-3">
+                                        <input type="text" id="cptInfo" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                    <div class="col-7">
+                                        <input type="text" id="street" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <input type="text" id="postalCode" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                    <div class="col-5">
+                                        <input type="text" id="city" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="text" id="country" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
@@ -121,11 +147,45 @@
                         $('#vatNumber').val(data['vatNumber']);
                         $('#phone').val(data['phone']);
                         $('#email').val(data['email']);
+
+                        if(data['address']) {
+                            $('#houseNumber').val(data['address']['number']);
+                            $('#cptInfo').val(data['address']['cptInfo']);
+                            $('#street').val(data['address']['street']);
+                            $('#postalCode').val(data['address']['postalCode']);
+                            $('#city').val(data['address']['city']);
+                            $('#country').val(data['address']['country']);
+                        }
                     }
                 });
             };
 
             fetchClientDetails();
+
+            const recalculateTotalAmounts = function() {
+                let totalExcl = 0.0;
+                let totalIncl = 0.0;
+
+                $('input[id$=_totalExcl]').each(function() {
+                    const val = parseFloat($(this).val());
+                    if (!isNaN(val)) {
+                        totalExcl += val;
+                    }
+                });
+
+                $('input[id$=_totalIncl]').each(function() {
+                    const val = parseFloat($(this).val());
+                    if (!isNaN(val)) {
+                        totalIncl += val;
+                    }
+                });
+
+                const totalVat = totalIncl - totalExcl;
+
+                $('#invoice_totalAmountNet').val(totalExcl.toFixed(2));
+                $('#invoice_totalAmountGross').val(totalIncl.toFixed(2));
+                $('#invoice_totalVatAmount').val(totalVat.toFixed(2));
+            };
 
             const $wrapper = document.querySelector('#invoice-details');
             let index = $wrapper.dataset.index;
@@ -215,11 +275,14 @@
                     totalExclInput.val(totalExcl.toFixed(2));
                     if (!isNaN(vatRate)) {
                         totalInclInput.val((totalExcl * (1 + vatRate / 100)).toFixed(2));
+                        recalculateTotalAmounts();
                     }
                 }
+
             });
             $('#invoice-details').on('click', '.remove-invoice-detail', function(){
                 $(this).parents('tr').remove();
+                recalculateTotalAmounts()
             });
 
             $('#invoice_client').change(fetchClientDetails);

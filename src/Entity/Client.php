@@ -30,14 +30,14 @@ class Client
     private ?string $email = null;
 
     /**
-     * @var Collection<int, Adres>
+     * @var Collection<int, Address>
      */
-    #[ORM\ManyToMany(targetEntity: Adres::class, mappedBy: 'client')]
-    private Collection $adres;
+    #[ORM\ManyToMany(targetEntity: Address::class, mappedBy: 'client')]
+    private Collection $address;
 
     public function __construct()
     {
-        $this->adres = new ArrayCollection();
+        $this->address = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -94,27 +94,27 @@ class Client
     }
 
     /**
-     * @return Collection<int, Adres>
+     * @return Collection<int, Address>
      */
-    public function getAdres(): Collection
+    public function getAddresses(): Collection
     {
-        return $this->adres;
+        return $this->address;
     }
 
-    public function addAdre(Adres $adre): static
+    public function addAddresse(Address $address): static
     {
-        if (!$this->adres->contains($adre)) {
-            $this->adres->add($adre);
-            $adre->addClient($this);
+        if (!$this->address->contains($address)) {
+            $this->address->add($address);
+            $address->addClient($this);
         }
 
         return $this;
     }
 
-    public function removeAdre(Adres $adre): static
+    public function removeAdre(Address $address): static
     {
-        if ($this->adres->removeElement($adre)) {
-            $adre->removeClient($this);
+        if ($this->address->removeElement($address)) {
+            $address->removeClient($this);
         }
 
         return $this;
