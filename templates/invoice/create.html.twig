@@ -1,0 +1,291 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une facture{% endblock %}
+
+{% block body %}
+    <style>
+        #invoice-details td input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #invoice-details .form-control {
+            /*border-left: none;*/
+            /*border-top: none;*/
+            /*border-right: none;*/
+            /*border-radius: 0;*/
+            /*box-shadow: none;*/
+        }
+        #invoice-details tr {
+            border: transparent;
+        }
+        .button-line {
+            flex: 1;
+            height: 2px;
+            background-color: var(--bs-primary);
+        }
+    </style>
+    <div class="container">
+        <h1 class="my-4">Nouvelle facture</h1>
+
+        {{ form_start(invoiceForm, {'attr': {'class': 'mb-4'}}) }}
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header small">
+                        <div class="row justify-content-between">
+                            <div class="col-md-3">
+                                {{ form_row(invoiceForm.date, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form_row(invoiceForm.status, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
+                            </div>
+                        </div>
+                        <div class="row justify-content-end mt-1">
+                            <div class="col-md-3">
+                                {{ form_row(invoiceForm.invoiceNumber, {'attr': {'class': 'form-control border border-black', 'readonly': 'readonly'}, 'label_attr': {'class': 'text-white-50 mb-2'}}) }}
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+
+                            <div class="col-md-4 d-flex flex-column">
+
+                                    {{ form_row(invoiceForm.client, {'attr': {'class': 'form-control mb-2'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
+                                    <input type="text" id="vatNumber" class="form-control mb-2 border border-black" readonly>
+                                    <input type="text" id="phone" class="form-control mb-2 border border-black" readonly>
+                                    <input type="text" id="email" class="form-control mb-2 border border-black" readonly>
+
+                            </div>
+                            <div class="col-md-7 mt-4">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <input type="text" id="houseNumber" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                    <div class="col-3">
+                                        <input type="text" id="cptInfo" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                    <div class="col-7">
+                                        <input type="text" id="street" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <input type="text" id="postalCode" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                    <div class="col-5">
+                                        <input type="text" id="city" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="text" id="country" class="form-control mb-2 border border-black" readonly>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="text-white-50">Détails de la facture</h4>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th class="col-4 text-white-50">Description</th>
+                                <th class="col-2 text-white-50">Prix unitaire</th>
+                                <th class="col-1 text-white-50">Quantité</th>
+                                <th class="col-2 text-white-50">Total HTVA</th>
+                                <th class="col-1 text-white-50">TVA (%)</th>
+                                <th class="col-2 text-white-50">Total TVAC</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody data-index="0" id="invoice-details" data-prototype="{{ form_widget(invoiceForm.invoiceDetails.vars.prototype)|e('html_attr')}}">
+                            {% for detailForm in invoiceForm.invoiceDetails %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                    <button type="button" class="btn btn-link btn-lg w-50" id="add-invoice-detail" style="display: flex; align-items: center;">
+                        <div class="button-line"></div>
+                        <i class="bi bi-plus-circle ms-2 me-2 bi-lg"></i>
+                        <div class="button-line"></div>
+                    </button>
+                    </div>
+                    <div class="card-footer d-flex flex-column align-items-end pt-5">
+                        {{ form_row(invoiceForm.totalAmountNet, {'label': 'Total HTVA', 'attr': {'class': 'form-control border border-black', 'readonly': 'readonly'}, 'label_attr': {'class': 'text-white-50 small'}}) }}
+                        {{ form_row(invoiceForm.totalVatAmount, {'label': 'Total TVA', 'attr': {'class': 'form-control border border-black', 'readonly': 'readonly'}, 'label_attr': {'class': 'text-white-50 small'}}) }}
+                        <div class="mt-3 mb-2">
+                            {{ form_row(invoiceForm.totalAmountGross, {'label': 'TOTAL', 'attr': {'class': 'form-control border border-4', 'readonly': 'readonly'}, 'label_attr': {'class': 'fs-5'}}) }}
+                        </div>
+                    </div>
+                    </div>
+
+               </div>
+
+            </div>
+        <button type="submit" class="btn btn-success">Créer une facture</button>
+        </div>
+
+
+        {{ form_end(invoiceForm) }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+
+            const fetchClientDetails = function() {
+                const selectedClientId = $('#invoice_client').val();
+
+                $.ajax({
+                    url: '/client/' + selectedClientId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#company').val(data['company']);
+                        $('#vatNumber').val(data['vatNumber']);
+                        $('#phone').val(data['phone']);
+                        $('#email').val(data['email']);
+
+                        if(data['address']) {
+                            $('#houseNumber').val(data['address']['number']);
+                            $('#cptInfo').val(data['address']['cptInfo']);
+                            $('#street').val(data['address']['street']);
+                            $('#postalCode').val(data['address']['postalCode']);
+                            $('#city').val(data['address']['city']);
+                            $('#country').val(data['address']['country']);
+                        }
+                    }
+                });
+            };
+
+            fetchClientDetails();
+
+            const recalculateTotalAmounts = function() {
+                let totalExcl = 0.0;
+                let totalIncl = 0.0;
+
+                $('input[id$=_totalExcl]').each(function() {
+                    const val = parseFloat($(this).val());
+                    if (!isNaN(val)) {
+                        totalExcl += val;
+                    }
+                });
+
+                $('input[id$=_totalIncl]').each(function() {
+                    const val = parseFloat($(this).val());
+                    if (!isNaN(val)) {
+                        totalIncl += val;
+                    }
+                });
+
+                const totalVat = totalIncl - totalExcl;
+
+                $('#invoice_totalAmountNet').val(totalExcl.toFixed(2));
+                $('#invoice_totalAmountGross').val(totalIncl.toFixed(2));
+                $('#invoice_totalVatAmount').val(totalVat.toFixed(2));
+            };
+
+            const $wrapper = document.querySelector('#invoice-details');
+            let index = $wrapper.dataset.index;
+
+            document.querySelector('#add-invoice-detail').addEventListener('click', function() {
+                const prototype = $wrapper.dataset.prototype;
+                const newFormHtml = prototype.replace(/__name__/g, index);
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = newFormHtml;
+
+                const $newFormTr = document.createElement('tr');
+
+                Array.from(tempDiv.children[0].children).forEach((div) => {
+                    const td = document.createElement('td');
+
+                    while (div.firstChild) {
+                        td.appendChild(div.firstChild);  // Moves the child nodes of div to td
+                    }
+                    $newFormTr.appendChild(td);
+                });
+
+                // Créez une nouvelle colonne pour le bouton de suppression
+                const deleteTd = document.createElement('td');
+/// Créez le bouton de suppression
+                const deleteButton = document.createElement('button');
+// Ajoutez une classe de suppression à laquelle nous pourrons attacher l'événement click
+                deleteButton.classList.add('btn', 'btn-danger', 'remove-invoice-detail');
+// Ajoutez l'icône de suppression
+                deleteButton.innerHTML =
+                    '<i class="bi bi-x"></i>';
+// Ajoutez le bouton à la nouvelle colonne
+                deleteTd.appendChild(deleteButton);
+// Ajoutez la nouvelle colonne à la ligne
+                $newFormTr.appendChild(deleteTd);
+
+                $wrapper.appendChild($newFormTr);
+
+                $(`input[id$=invoice_invoiceDetails_${index}_quantity], input[id$=invoice_invoiceDetails_${index}_unitPriceExcl], input[id$=invoice_invoiceDetails_${index}_vatRate]`).change(function() {
+                    let quantityInput = $(`input[id$=invoice_invoiceDetails_${index}_quantity]`);
+                    let unitPriceInput = $(`input[id$=invoice_invoiceDetails_${index}_unitPriceExcl]`);
+                    let vatRateInput = $(`input[id$=invoice_invoiceDetails_${index}_vatRate]`);
+                    let totalExclInput = $(`input[id$=invoice_invoiceDetails_${index}_totalExcl]`);
+                    let totalInclInput = $(`input[id$=invoice_invoiceDetails_${index}_totalIncl]`);
+
+
+                    let quantity = parseFloat(quantityInput.val());
+                    let unitPrice = parseFloat(unitPriceInput.val());
+                    let vatRate = parseFloat(vatRateInput.val());
+
+                    if (!isNaN(quantity) && !isNaN(unitPrice)) {
+                        let totalExcl = quantity * unitPrice;
+                        totalExclInput.val(totalExcl.toFixed(2));
+                        if (!isNaN(vatRate)) {
+                            totalInclInput.val((totalExcl * (1 + vatRate / 100)).toFixed(2));
+                        }
+                    }
+                });
+
+                Array.from($newFormTr.querySelectorAll('input, select, textarea')).forEach((input) => {
+                    input.classList.add('form-control');
+                });
+                $(`input[id$=invoice_invoiceDetails_${index}_totalExcl], input[id$=invoice_invoiceDetails_${index}_totalIncl]`).prop('readonly', true).addClass('border border-black');;
+
+                index++;
+                $wrapper.dataset.index = index;
+            });
+
+            $('#invoice-details').on('change', 'input[id$=_quantity], input[id$=_unitPriceExcl], input[id$=_vatRate]', function() {
+                let idParts = this.id.split('_');
+                let index = idParts[idParts.length - 2];
+
+                let quantityInput = $(`input[id$=invoice_invoiceDetails_${index}_quantity]`);
+                let unitPriceInput = $(`input[id$=invoice_invoiceDetails_${index}_unitPriceExcl]`);
+                let vatRateInput = $(`input[id$=invoice_invoiceDetails_${index}_vatRate]`);
+                let totalExclInput = $(`input[id$=invoice_invoiceDetails_${index}_totalExcl]`);
+                let totalInclInput = $(`input[id$=invoice_invoiceDetails_${index}_totalIncl]`);
+                $(`input[id$=invoice_invoiceDetails_${index}_totalExcl], input[id$=invoice_invoiceDetails_${index}_totalIncl]`).prop('readonly', true);
+
+
+                let quantity = parseFloat(quantityInput.val());
+                let unitPrice = parseFloat(unitPriceInput.val());
+                let vatRate = parseFloat(vatRateInput.val());
+
+                if (!isNaN(quantity) && !isNaN(unitPrice)) {
+                    let totalExcl = quantity * unitPrice;
+                    totalExclInput.val(totalExcl.toFixed(2));
+                    if (!isNaN(vatRate)) {
+                        totalInclInput.val((totalExcl * (1 + vatRate / 100)).toFixed(2));
+                        recalculateTotalAmounts();
+                    }
+                }
+
+            });
+            $('#invoice-details').on('click', '.remove-invoice-detail', function(){
+                $(this).parents('tr').remove();
+                recalculateTotalAmounts()
+            });
+
+            $('#invoice_client').change(fetchClientDetails);
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Controller;
+
+use Doctrine\ORM\EntityManagerInterface;
+use Dompdf\Dompdf;
+use Knp\Snappy\Pdf;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use App\Form\InvoiceType;
+use App\Entity\Invoice;
+
+class InvoiceController extends AbstractController
+{
+    #[Route('/invoices', name: 'app_invoice')]
+    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $invoice = new Invoice(); // Créer une nouvelle instance de la facture
+
+        $form = $this->createForm(InvoiceType::class, $invoice); // Créer le formulaire
+
+        $form->handleRequest($request); // Traiter la demande HTTP incoming
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Ici, nous pourrions sauvegarder l'entité dans la base de données
+             $entityManager->persist($invoice);
+             $entityManager->flush();
+
+            // Puis rediriger l'utilisateur vers une autre page
+            // return $this->redirectToRoute('invoice_success');
+        }
+
+        return $this->render('invoice/create.html.twig', [
+            'invoiceForm' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/invoice/{id}', name: 'invoice_show')]
+    public function show(Invoice $invoice): Response
+    {
+        return $this->render('invoice/show.html.twig', [
+            'invoice' => $invoice,
+        ]);
+    }
+
+    #[Route('invoice/pdf/{id}', 'print_invoice')]
+    public function pdfAction(Invoice $invoice, Pdf $snappy)
+    {
+
+        // Génère votre vue Twig
+        $html = $this->renderView('invoice/show.html.twig', [
+            'invoice' => $invoice,
+        ]);
+
+        $snappy->generateFromHtml($html, '/home/u180592966/domains/pax-tech.com/public_html/api/file.pdf');
+
+        return new Response('File has been saved');
+    }
+}
