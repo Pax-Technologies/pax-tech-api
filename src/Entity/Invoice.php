@@ -169,4 +169,18 @@ class Invoice
 
         return $this;
     }
+
+    public function getStatusText()
+    {
+        switch($this->status) {
+            case 1:
+                return 'Payé';
+            case 2:
+                return 'Non payé';
+            case 3:
+                return 'Annulé';
+            default:
+                return 'Statut inconnu';
+        }
+    }
 }

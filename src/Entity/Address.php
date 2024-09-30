@@ -159,4 +159,25 @@ class Address
 
         return $this;
     }
+
+    public function __toString()
+    {
+        $str = "";
+        if ($this->number) {
+            $str .= $this->number;
+        }
+
+        if ($this->cptInfo) {
+            $str ? $str .= " " . $this->cptInfo : $str .= $this->cptInfo;
+        }
+
+        $str .= ", " . $this->street;
+        $str .= " - " . $this->postalCode;
+        $str .= " " . $this->city;
+        $str .= " (" . $this->country . ")";
+
+        return $str;
+    }
+
+
 }

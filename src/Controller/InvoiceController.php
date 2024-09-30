@@ -30,8 +30,16 @@ class InvoiceController extends AbstractController
             // return $this->redirectToRoute('invoice_success');
         }
 
-        return $this->render('invoice/invoice.html.twig', [
+        return $this->render('invoice/create.html.twig', [
             'invoiceForm' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/invoice/{id}', name: 'invoice_show')]
+    public function show(Invoice $invoice): Response
+    {
+        return $this->render('invoice/show.html.twig', [
+            'invoice' => $invoice,
         ]);
     }
 }

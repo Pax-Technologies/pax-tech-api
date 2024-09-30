@@ -13,7 +13,7 @@ class HomeController extends AbstractController
     {
 
         return $this->redirectToRoute('admin');
-//        return $this->render('home/invoice.html.twig', [
+//        return $this->render('home/create.html.twig', [
 //            'controller_name' => 'HomeController',
 //        ]);
     }

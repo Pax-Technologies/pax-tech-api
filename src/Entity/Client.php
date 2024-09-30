@@ -7,6 +7,7 @@ use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 #[ApiResource]
@@ -101,7 +102,7 @@ class Client
         return $this->address;
     }
 
-    public function addAddresse(Address $address): static
+    public function addAddress(Address $address): static
     {
         if (!$this->address->contains($address)) {
             $this->address->add($address);
@@ -111,12 +112,41 @@ class Client
         return $this;
     }
 
-    public function removeAdre(Address $address): static
+    public function removeAdress(Address $address): static
     {
         if ($this->address->removeElement($address)) {
             $address->removeClient($this);
         }
 
         return $this;
+    }
+
+    public function getBillingAddress()
+    {
+        foreach ($this->address as $address) {
+            if ($address->getType() === 1) {
+                return $address;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @Assert\Callback
+     */
+    public function validateAddressTypes(ExecutionContextInterface $context, $payload)
+    {
+        // Collect all address types for this client
+        $addressTypes = array_map(function (Address $address) {
+            return $address->getType();
+        }, $this->addresses->toArray());
+
+        // Check for duplicates
+        if (count($addressTypes) !== count(array_unique($addressTypes))) {
+            $context->buildViolation('A client cannot have two addresses of the same type.')
+                ->atPath('addresses')
+                ->addViolation();
+        }
     }
 }
