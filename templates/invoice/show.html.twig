@@ -4,16 +4,10 @@
 
 {% block body %}
     <style>
+        /* Style pour rendre l'affichage plus agréable */
         #invoice-details td input {
             width: 100%;
             box-sizing: border-box;
-        }
-        #invoice-details .form-control {
-            /*border-left: none;*/
-            /*border-top: none;*/
-            /*border-right: none;*/
-            /*border-radius: 0;*/
-            /*box-shadow: none;*/
         }
         #invoice-details tr {
             border: transparent;
@@ -27,22 +21,17 @@
     <div class="container">
         <h1 class="my-4">Facture n°{{ invoice.invoiceNumber }}</h1>
         <a href="{{ path('print_invoice', {'id': invoice.id}) }}">Imprimer la facture</a>
+
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
                     <div class="card-header small">
                         <div class="row justify-content-between">
-                            <div class="col-md-3">
-                                {{ invoice.date|date("Y-m-d") }}
-                            </div>
-                            <div class="col-md-3">
-                                {{ invoice.statusText }}
-                            </div>
+                            <div class="col-md-3">{{ invoice.date|date("Y-m-d") }}</div>
+                            <div class="col-md-3">{{ invoice.statusText }}</div>
                         </div>
                         <div class="row justify-content-end mt-1">
-                            <div class="col-md-3">
-                                {{ invoice.invoiceNumber }}
-                            </div>
+                            <div class="col-md-3">{{ invoice.invoiceNumber }}</div>
                         </div>
                         <div class="row mt-4">
                             <h5>Client</h5>
@@ -53,30 +42,7 @@
                                 <h6 class="d-inline">Téléphone: </h6><p class="d-inline">{{ invoice.client.phone }}</p><br>
                                 <h6 class="d-inline">Email: </h6><p class="d-inline">{{ invoice.client.email }}</p>
                             </div>
-                            <div class="col-md-7 mt-4">
-{#                                <div class="row">#}
-{#                                    <div class="col-2">#}
-{#                                        {{ invoice.client.billingAddress.houseNumber }}#}
-{#                                    </div>#}
-{#                                    <div class="col-3">#}
-{#                                        {{ invoice.client.billingAddress.cptInfo }}#}
-{#                                    </div>#}
-{#                                    <div class="col-7">#}
-{#                                        {{ invoice.client.billingAddress.street }}#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                                <div class="row">#}
-{#                                    <div class="col-3">#}
-{#                                        {{ invoice.client.billingAddress.postalCode }}#}
-{#                                    </div>#}
-{#                                    <div class="col-5">#}
-{#                                        {{ invoice.client.billingAddress.city }}#}
-{#                                    </div>#}
-{#                                    <div class="col-4">#}
-{#                                        {{ invoice.client.billingAddress.country }}#}
-{#                                    </div>#}
-{#                                </div>#}
-                            </div>
+                            <div class="col-md-7 mt-4"></div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -95,12 +61,12 @@
                             <tbody>
                             {% for detailForm in invoice.invoiceDetails %}
                                 <tr>
-                                <td class="text-white">{{ detailForm.description }}</td class="text-white">
-                                <td class="text-white">{{ detailForm.unitPriceExcl }}</td class="text-white">
-                                <td class="text-white">{{ detailForm.quantity }}</td class="text-white">
-                                <td class="text-white">{{ detailForm.totalExcl }}</td class="text-white">
-                                <td class="text-white">{{ detailForm.vatRate }}</td class="text-white">
-                                <td class="text-white">{{ detailForm.totalIncl }}</td>
+                                    <td class="text-white">{{ detailForm.description }}</td>
+                                    <td class="text-white">{{ detailForm.unitPriceExcl }}</td>
+                                    <td class="text-white">{{ detailForm.quantity }}</td>
+                                    <td class="text-white">{{ detailForm.totalExcl }}</td>
+                                    <td class="text-white">{{ detailForm.vatRate }}</td>
+                                    <td class="text-white">{{ detailForm.totalIncl }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -115,14 +81,7 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
-{#        <button type="submit" class="btn btn-success">Créer une facture</button>#}
-    </div>
-
-
-
     </div>
 {% endblock %}

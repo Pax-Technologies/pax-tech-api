@@ -15,5 +15,12 @@
       <jdbc-url>jdbc:mysql://localhost:3306/paxtech</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="paxtech.app" uuid="979dfb21-1b43-44a5-8a53-e3b7fcd79b73">
+      <driver-ref>mariadb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mariadb://194.5.159.77:3306/paxt_api</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
