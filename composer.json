@@ -95,7 +95,8 @@
             "composer dump-env prod",
             "php bin/console doctrine:schema:update --force",
             "php bin/console cache:clear --env=prod",
-            "rm .env"
+            "rm .env",
+            "composer update"
         ],
         "post-update-cmd": [
             "@auto-scripts",
