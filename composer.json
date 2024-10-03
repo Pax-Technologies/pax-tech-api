@@ -93,6 +93,8 @@
             "composer dump-env prod",
             "php bin/console doctrine:schema:update --force",
             "php bin/console cache:clear --env=prod",
+            "chown -R nobody:nobody /home/api.paxtech.app/public_html/var/cache",
+            "chmod -R 775 /home/api.paxtech.app/public_html/var/cache",
             "rm .env",
             "composer update"
         ],
