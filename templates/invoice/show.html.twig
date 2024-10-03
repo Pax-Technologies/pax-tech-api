@@ -1,128 +1,243 @@
 {% extends 'base.html.twig' %}
 
+
 {% block title %}Afficher une facture{% endblock %}
 
 {% block body %}
     <style>
+        /* Styles par défaut */
         #invoice-details td input {
             width: 100%;
             box-sizing: border-box;
         }
-        #invoice-details .form-control {
-            /*border-left: none;*/
-            /*border-top: none;*/
-            /*border-right: none;*/
-            /*border-radius: 0;*/
-            /*box-shadow: none;*/
-        }
+
         #invoice-details tr {
             border: transparent;
         }
-        .button-line {
-            flex: 1;
-            height: 2px;
-            background-color: var(--bs-primary);
+
+        .show-on-pdf {
+            display: none;
+        }
+
+        /* DIVISION PDF */
+        .pdf-mode .card {
+            background-color: white;
+            color: black;
+        }
+
+        .pdf-mode #invoice-details {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .pdf-mode #invoice-details th, .pdf-mode #invoice-details td {
+            color: black !important;
+        }
+
+        .pdf-mode {
+            border-top: 10px solid #EB0045;
+            color: black;
+            background-color: white;
+            font-size: 11px;
+        }
+
+        .pdf-mode h5 {
+            font-size: 1.5em;
+        }
+
+        .pdf-mode h6 {
+            font-size: 1.1em !important;
+        }
+
+        .pdf-mode {
+            --bs-body-bg: white !important; /* Définir la variable ici */
+        }
+
+        .pdf-mode .fade-title {
+            color: lightgrey !important;
+        }
+
+        .pdf-mode .show-on-pdf {
+            display: block !important;
         }
     </style>
-    <div class="container">
-        <h1 class="my-4">Facture n°{{ invoice.invoiceNumber }}</h1>
-        <a href="{{ path('print_invoice', {'id': invoice.id}) }}">Imprimer la facture</a>
-        <div class="row">
-            <div class="col-12">
-                <div class="card mb-4">
-                    <div class="card-header small">
-                        <div class="row justify-content-between">
-                            <div class="col-md-3">
-                                {{ invoice.date|date("Y-m-d") }}
-                            </div>
-                            <div class="col-md-3">
-                                {{ invoice.statusText }}
-                            </div>
-                        </div>
-                        <div class="row justify-content-end mt-1">
-                            <div class="col-md-3">
-                                {{ invoice.invoiceNumber }}
-                            </div>
-                        </div>
-                        <div class="row mt-4">
-                            <h5>Client</h5>
-                            <div class="col-md-4 mt-2">
-                                <h6 class="d-inline">Nom: </h6><p class="d-inline">{{ invoice.client.company }}</p><br>
-                                <h6 class="d-inline">Numéro de TVA: </h6><p class="d-inline">{{ invoice.client.vATNumber }}</p><br>
-                                <h6 class="d-inline">Adresse: </h6><p class="d-inline">{{ invoice.client.billingAddress }}</p><br>
-                                <h6 class="d-inline">Téléphone: </h6><p class="d-inline">{{ invoice.client.phone }}</p><br>
-                                <h6 class="d-inline">Email: </h6><p class="d-inline">{{ invoice.client.email }}</p>
-                            </div>
-                            <div class="col-md-7 mt-4">
-{#                                <div class="row">#}
-{#                                    <div class="col-2">#}
-{#                                        {{ invoice.client.billingAddress.houseNumber }}#}
-{#                                    </div>#}
-{#                                    <div class="col-3">#}
-{#                                        {{ invoice.client.billingAddress.cptInfo }}#}
-{#                                    </div>#}
-{#                                    <div class="col-7">#}
-{#                                        {{ invoice.client.billingAddress.street }}#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                                <div class="row">#}
-{#                                    <div class="col-3">#}
-{#                                        {{ invoice.client.billingAddress.postalCode }}#}
-{#                                    </div>#}
-{#                                    <div class="col-5">#}
-{#                                        {{ invoice.client.billingAddress.city }}#}
-{#                                    </div>#}
-{#                                    <div class="col-4">#}
-{#                                        {{ invoice.client.billingAddress.country }}#}
-{#                                    </div>#}
-{#                                </div>#}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h4 class="text-white-50">Détails de la facture</h4>
-                        <table class="table" id="invoice-details">
-                            <thead>
-                            <tr>
-                                <th class="col-4 text-white-50">Description</th>
-                                <th class="col-2 text-white-50">Prix unitaire</th>
-                                <th class="col-1 text-white-50">Quantité</th>
-                                <th class="col-2 text-white-50">Total HTVA</th>
-                                <th class="col-1 text-white-50">TVA (%)</th>
-                                <th class="col-2 text-white-50">Total TVAC</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for detailForm in invoice.invoiceDetails %}
-                                <tr>
-                                <td class="text-white">{{ detailForm.description }}</td class="text-white">
-                                <td class="text-white">{{ detailForm.unitPriceExcl }}</td class="text-white">
-                                <td class="text-white">{{ detailForm.quantity }}</td class="text-white">
-                                <td class="text-white">{{ detailForm.totalExcl }}</td class="text-white">
-                                <td class="text-white">{{ detailForm.vatRate }}</td class="text-white">
-                                <td class="text-white">{{ detailForm.totalIncl }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
 
-                    <div class="card-footer d-flex flex-column align-items-end pt-5">
-                        <h6 class="mb-2">Total HTVA: <strong>{{ invoice.totalAmountNet|number_format(2, '.', ',') }}€</strong></h6>
-                        <h6 class="mb-2">Total TVA: <strong>{{ invoice.totalVatAmount|number_format(2, '.', ',') }}€</strong></h6>
-                        <div class="mt-3 mb-2">
-                            <h4 class="">Total TVAC: <strong>{{ invoice.totalAmountGross|number_format(2, '.', ',') }}€</strong></h4>
-                        </div>
-                    </div>
+
+
+
+    <div class="container">
+        <div class="row d-flex justify-content-end mb-3">
+            <div class="d-flex flex-column align-items-end">
+                <div class="form-check form-switch ms-3 mt-5">
+                    <input class="form-check-input" type="checkbox" id="toggle-pdf-mode">
+                    <label class="form-check-label" for="toggle-pdf-mode">PDF mode</label>
                 </div>
+                <button class="btn btn-primary col-lg-1 mt-3" id="download-pdf">
+                    <i class="bi bi-download"></i>&nbsp; PDF
+                </button>
 
             </div>
-
         </div>
-{#        <button type="submit" class="btn btn-success">Créer une facture</button>#}
+        <div class="container invoice-content">
+            <div class="container row d-flex justify-content-between">
+                <div class="col-9 pt-3">
+                    <h3 class="mts-4">Facture n°{{ invoice.invoiceNumber }}</h3>
+                    <p class="mb-5">Date: {{ invoice.date|date("d-m-Y") }}</p>
+                </div>
+                <div class="col-3 mt-2 pb-4">
+                    <img src="{{ asset('Logos/Web/PNG/RGB/300 dpi/PaxTech-Vertical-Tagline-300[Cropped].png') }}"
+                         height="auto" width="150" class="show-on-pdf">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="text-white-50 fade-title pt-2">Informations</h6>
+                            <div class="row small">
+
+                                <div class="col-md-6 mt-2">
+                                    <h5>Société</h5>
+                                    <h6 class="d-inline">Nom: </h6>
+                                    <p class="d-inline">Pax Technologies</p><br>
+                                    <h6 class="d-inline">Numéro de TVA: </h6>
+                                    <p class="d-inline">BE 0771.359.440</p><br>
+                                    <h6 class="d-inline">Adresse: </h6>
+                                    <p class="d-inline">33, 4ème Rue - 6040 Jumet</p><br>
+                                    <h6 class="d-inline">Téléphone: </h6>
+                                    <p class="d-inline">+32 474 65 23 18</p><br>
+                                    <h6 class="d-inline">Email: </h6>
+                                    <p class="d-inline">invoices@pax-tech.com</p>
+                                </div>
+
+
+                                <div class="col-md-6 mt-2">
+                                    <h5>Client</h5>
+                                    <h6 class="d-inline">Nom: </h6>
+                                    <p class="d-inline">{{ invoice.client.company }}</p><br>
+                                    <h6 class="d-inline">Numéro de TVA: </h6>
+                                    <p class="d-inline">{{ invoice.client.vATNumber }}</p><br>
+                                    <h6 class="d-inline">Adresse: </h6>
+                                    <p class="d-inline">{{ invoice.client.billingAddress }}</p><br>
+                                    <h6 class="d-inline">Téléphone: </h6>
+                                    <p class="d-inline">{{ invoice.client.phone }}</p><br>
+                                    <h6 class="d-inline">Email: </h6>
+                                    <p class="d-inline">{{ invoice.client.email }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="text-white-50 fade-title">Détails</h6>
+                            <table class="table" id="invoice-details">
+                                <thead>
+                                <tr>
+                                    <th class="h6 col-4 text-white-50">Description</th>
+                                    <th class="col-2 text-white-50">Prix unitaire</th>
+                                    <th class="col-1 text-white-50">Quantité</th>
+                                    <th class="col-2 text-white-50">Total HTVA</th>
+                                    <th class="col-1 text-white-50">TVA</th>
+                                    <th class="col-2 text-white-50">Total TVAC</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for detailForm in invoice.invoiceDetails %}
+                                    <tr>
+                                        <td class="text-white">{{ detailForm.description }}</td>
+                                        <td class="text-white">{{ detailForm.unitPriceExcl|number_format(2, ',', ' ') }}
+                                            €
+                                        </td>
+                                        <td class="text-white">{{ detailForm.quantity }}</td>
+                                        <td class="text-white">{{ detailForm.totalExcl|number_format(2, ',', ' ') }}€
+                                        </td>
+                                        <td class="text-white">{{ detailForm.vatRate }} %</td>
+                                        <td class="text-white">{{ detailForm.totalIncl|number_format(2, ',', ' ') }}€
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="card-footer">
+                            <h6 class="text-white-50 fade-title pt-1">Informations financières</h6>
+                            <div class="row d-flex justify-content-between pt-2">
+                                <div class="col-4 ">
+                                    <div class="show-on-pdf">
+                                        Veuillez payer cette facture sur le numéro de compte
+                                        <p class="text-primary"><strong>BE16 9734 9196 8674</strong></p>
+                                        avec la communication
+                                        <p class="text-primary"><strong>{{ invoice.invoiceNumber }}</strong>
+                                        </p> {#  @TODO définir la communication #}
+
+                                        Date d'échéance de la facture :
+                                        <p class="text-primary">
+                                            <strong>{{ "now"|date_modify("+30 days")|date("d-m-Y") }}</strong>
+                                        </p> {#  @TODO définir la deadline #}
+                                    </div>
+                                </div>
+                                <div class="col-6 d-flex flex-column align-items-end">
+                                    <h6 class="mb-2">Total HTVA:
+                                        <strong>{{ invoice.totalAmountNet|number_format(2, '.', ',') }}
+                                            €</strong></h6>
+                                    <h6 class="mb-2">Total TVA:
+                                        <strong>{{ invoice.totalVatAmount|number_format(2, '.', ',') }}
+                                            €</strong></h6>
+                                    <div class="mt-3 mb-2">
+                                        <h4 class="">Total TVAC:
+                                            <strong>{{ invoice.totalAmountGross|number_format(2, '.', ',') }} €</strong>
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {#        <button type="submit" class="btn btn-success">Créer une facture</button> #}
     </div>
 
+    <script>
+        document.getElementById('download-pdf').addEventListener('click', function () {
+            // Sélectionne l'élément HTML que tu veux convertir en PDF
+            const invoiceElement = document.querySelector('.invoice-content');
+            const invoice = {
+                invoiceNumber: '{{ invoice.invoiceNumber }}',
+                client: {
+                    company: '{{ invoice.client.company }}'
+                }
+            };
 
+            // Ajouter une classe pour les styles PDF
+            invoiceElement.classList.add('pdf-mode');
 
-    </div>
+            // Options pour html2pdf
+            var opt = {
+                margin: [20, 10, 20, 10], // Marges: [haut, droite, bas, gauche]
+                filename: `facture_${invoice.invoiceNumber}-${invoice.client.company}.pdf`, // Nom de fichier
+                image: {type: 'jpeg', quality: 1}, // Format d'image et qualité
+                html2canvas: {
+                    dpi: 192, // Résolution
+                    scale: 4, // Échelle pour améliorer la qualité
+                    letterRendering: true, // Amélioration du rendu des lettres
+                    useCORS: true // Utiliser CORS pour les images externes
+                },
+                jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'} // Configurations jsPDF
+            };
+
+            // Générer le PDF
+            html2pdf().from(invoiceElement).set(opt).save().then(() => {
+                // Retirer la classe pour revenir au style normal après le téléchargement
+                invoiceElement.classList.remove('pdf-mode');
+            });
+        });
+        // Gestionnaire pour le switch
+        document.getElementById('toggle-pdf-mode').addEventListener('change', function () {
+            const invoiceElement = document.querySelector('.invoice-content');
+            invoiceElement.classList.toggle('pdf-mode', this.checked); // Ajouter ou retirer la classe pdf-mode en fonction de l'état du switch
+        });
+    </script>
+
 {% endblock %}
+
