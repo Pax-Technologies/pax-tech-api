@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use Knp\Snappy\Pdf;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,8 +15,17 @@ use App\Entity\Invoice;
 
 class InvoiceController extends AbstractController
 {
-    #[Route('/invoices', name: 'app_invoice')]
+    #[Route('/invoices', name: 'invoices')]
     public function index(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $invoices = $entityManager->getRepository(Invoice::class)->findAll();
+
+        return $this->render('invoice/list.html.twig', [
+            'invoices' => $invoices,
+        ]);
+    }
+    #[Route('/create_invoice', name: 'create_invoice')]
+    public function createInvoice(Request $request, EntityManagerInterface $entityManager): Response
     {
         $invoice = new Invoice(); // Créer une nouvelle instance de la facture
 
@@ -45,17 +55,4 @@ class InvoiceController extends AbstractController
         ]);
     }
 
-    #[Route('invoice/pdf/{id}', 'print_invoice')]
-    public function pdfAction(Invoice $invoice, Pdf $snappy)
-    {
-
-        // Génère votre vue Twig
-        $html = $this->renderView('invoice/show.html.twig', [
-            'invoice' => $invoice,
-        ]);
-
-        $snappy->generateFromHtml($html, '/home/u180592966/domains/pax-tech.com/public_html/api/file.pdf');
-
-        return new Response('File has been saved');
-    }
 }
