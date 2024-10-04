@@ -3,14 +3,28 @@
 {% block title %}Mes factures{% endblock %}
 
 {% block body %}
-<div class="container">
-    {% for invoice in invoices %}
-        <div class="row">
-            <div class="col-4">{{ invoice.client.company }}</div>
-            <div class="col-4">{{ invoice.invoiceNumber }}</div>
-            <div class="col-2"></div>
-            <div class="col-1"><a href="{{ path('invoice_show', {id: invoice.id}) }}">PDF</a></div>
-        </div>
-    {% endfor %}
-</div>
+    <div class="container my-4">
+        <h2 class="mb-4">Liste des factures</h2>
+        <table class="table table-striped" id="invoices-table">
+            <thead class="table-dark">
+            <tr class="border-white">
+                <th>Nom de l'entreprise</th>
+                <th>Numéro de facture</th>
+                <th>Détail</th>
+                <th>Voir le PDF</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for invoice in invoices %}
+                <tr>
+                    <td class="text-white">{{ invoice.client.company }}</td>
+                    <td class="text-white">{{ invoice.invoiceNumber }}</td>
+                    <td class="text-center"><a class="link-underline link-underline-opacity-0" href="{{ path('invoice_show', {id: invoice.id}) }}"><i class="bi bi-eye"></i></a></td>
+                    <td class="text-center"><a class="link-underline link-underline-opacity-0" href="{{ path('invoice_pdf', {id: invoice.id}) }}" target="_blank"><i class="bi bi-file-pdf"></i></a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
 {% endblock %}

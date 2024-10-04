@@ -36,12 +36,18 @@ class InvoiceController extends AbstractController
 
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $billingMonth = $form->get('billingMonth')->getData();
+            $billingYear = $form->get('billingYear')->getData();
+            // Convertir le mois et l'année en un format utilisable pour générer le numéro de facture
+            $invoiceDate = $billingYear . str_pad($billingMonth, 2, '0', STR_PAD_LEFT);
+
+            $invoice->setInvoiceNumber($invoiceDate);  // Définir le numéro de facture
             // Ici, nous pourrions sauvegarder l'entité dans la base de données
              $entityManager->persist($invoice);
              $entityManager->flush();
 
             // Puis rediriger l'utilisateur vers une autre page
-            // return $this->redirectToRoute('invoice_success');
+            return $this->redirectToRoute('invoices');
         }
 
         return $this->render('invoice/create.html.twig', [
@@ -64,6 +70,7 @@ class InvoiceController extends AbstractController
         $pdfOptions = new Options();
         $pdfOptions->set('defaultFont', 'Arial');
         $pdfOptions->setIsHtml5ParserEnabled(true);
+        $pdfOptions->setFontCache('fonts');
 
         // Instantiate Dompdf with options
         $dompdf = new Dompdf($pdfOptions);
@@ -86,17 +93,32 @@ class InvoiceController extends AbstractController
         // Stocker le PDF dans une variable pour envoi par email ou autre
         $output = $dompdf->output();
 
-        // Chemin où vous souhaitez sauvegarder le PDF
-        $pdfDirectory = $this->getParameter('pdf_directory'); // Assurez-vous que ce paramètre est défini dans services.yaml
-        $pdfFilePath = $pdfDirectory . '/facture_' . $invoice->getInvoiceNumber() . '.pdf';
+        $year = substr($invoice->getInvoiceNumber(), 0, 4);
+        $month = substr($invoice->getInvoiceNumber(), 4, 2);
 
-        // Enregistrer le PDF sur le serveur
+// Chemin où vous souhaitez sauvegarder le PDF
+        $pdfDirectory = $this->getParameter('pdf_directory'); // Assurez-vous que ce paramètre est défini dans services.yaml
+
+// Créer le chemin du dossier basé sur l'année et le mois
+        $invoiceDirectory = $pdfDirectory . '/' . $year . '/' . $month;
+
+// Créer le répertoire si il n'existe pas
+        if (!file_exists($invoiceDirectory)) {
+            mkdir($invoiceDirectory, 0777, true);
+        }
+
+        // Remplacez les espaces dans le nom de l'entreprise par des tirets bas
+        $companyNameWithUnderscores = str_replace(' ', '_', $invoice->getClient()->getCompany());
+
+        $pdfFilePath = $invoiceDirectory . '/Facture_'  . $invoice->getInvoiceNumber(). '_' . $companyNameWithUnderscores . '.pdf';
+
+// Enregistrer le PDF sur le serveur
         file_put_contents($pdfFilePath, $output);
 
-        // Retourner la réponse avec le PDF généré
+// Retourner la réponse avec le PDF généré
         return new Response($output, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="facture_' . $invoice->getInvoiceNumber() . '.pdf"',
+            'Content-Disposition' => 'inline; filename="Facture_' . $invoice->getInvoiceNumber(). '_' . $companyNameWithUnderscores . '.pdf"',
         ]);
     }
 
