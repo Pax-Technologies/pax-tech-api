@@ -3,6 +3,7 @@
 namespace App\EventListener;
 
 use App\Entity\Invoice;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 class InvoiceListener
@@ -13,11 +14,6 @@ class InvoiceListener
 
         // verifie si l'objet est une instance de Invoice
         if (!$invoice instanceof Invoice) {
-            return;
-        }
-
-        // si la facture a déjà un numéro, ne rien faire
-        if ($invoice->getInvoiceNumber() !== null) {
             return;
         }
 
@@ -33,14 +29,25 @@ class InvoiceListener
         $invoice = $args->getObject();
         $entityManager = $args->getObjectManager();
 
-        // récupère l'année et le mois actuel
-        $yearMonth = date('Ym');
+        // récupère l'année et le mois à partir du numéro de facture
+        $yearMonth = substr($invoice->getInvoiceNumber(), 0, 6);
 
         // compte les factures pour ce mois et cette année
-        $count = $entityManager->getRepository(Invoice::class)->count(['invoiceNumber' => $yearMonth]);
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->startsWith('invoiceNumber', $yearMonth))
+            ->orderBy(['invoiceNumber' => Criteria::DESC])
+            ->setMaxResults(1);
 
-        // crée un numéro de facture en concaténant l'année et le mois avec le compteur + 1
-        $invoiceNumber = $yearMonth . str_pad((string) ($count + 1), 3, "0", STR_PAD_LEFT);
+        $lastInvoice = $entityManager->getRepository(Invoice::class)->matching($criteria)->first();
+
+        if ($lastInvoice) {
+            $lastSequence = substr($lastInvoice->getInvoiceNumber(), 6);
+        } else {
+            $lastSequence = 0;
+        }
+
+// crée un numéro de facture en concaténant l'année, le mois et le dernier numéro de séquence + 1
+        $invoiceNumber = $yearMonth . str_pad((string) ($lastSequence + 1), 2, "0", STR_PAD_LEFT);
 
         return $invoiceNumber;
     }
