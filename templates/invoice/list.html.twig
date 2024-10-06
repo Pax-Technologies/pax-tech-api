@@ -57,18 +57,20 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="sendEmailForm" method="post" action="{{ path('invoice_send') }}">
+                    <div id="successMessage" class="alert alert-success d-none"></div> <!-- Message de succès caché par défaut -->
+                    <div id="errorMessage" class="alert alert-danger d-none"></div> <!-- Message d'erreur caché par défaut -->
+                    <form id="sendEmailForm" method="post" action="{{ path('invoice_send') }}" class="needs-validation" novalidate>
                         <div class="mb-3">
-                            {{ form_row(emailForm.to) }} <!-- Email du destinataire -->
+                            {{ form_row(emailForm.to, {'attr': {'class': 'form-control'}}) }} <!-- Email du destinataire -->
                         </div>
                         <div class="mb-3">
-                            {{ form_row(emailForm.subject) }} <!-- Sujet de l'email -->
+                            {{ form_row(emailForm.subject, {'attr': {'class': 'form-control'}}) }} <!-- Sujet de l'email -->
                         </div>
                         <div class="mb-3">
-                            {{ form_row(emailForm.message) }} <!-- Message -->
+                            {{ form_row(emailForm.message, {'attr': {'class': 'form-control'}}) }} <!-- Message -->
                         </div>
-                        <input type="hidden" id="id" name="id" value="">
-                        {{ form_row(emailForm._token) }} <!-- CSRF Token -->
+                        <input type="hidden" id="id" name="id" class="form-control" value="">
+                        {{ form_row(emailForm._token, {'attr': {'class': 'form-control'}}) }} <!-- CSRF Token -->
                         <button type="submit" class="btn btn-success">Envoyer</button>
                     </form>
                 </div>
@@ -117,9 +119,18 @@
                     // Tenter de le convertir en JSON si le texte est un JSON valide
                     try {
                         const data = JSON.parse(text);
+                        const successMessage = document.getElementById('successMessage');
+                        const errorMessage = document.getElementById('errorMessage');
+                        successMessage.classList.add('d-none'); // Masquer le message de succès par défaut
+                        errorMessage.classList.add('d-none'); // Masquer le message d'erreur par défaut
                         if (data.success) {
-                            alert('La facture a été envoyée avec succès.');
-                            location.reload(); // Optionnel, pour recharger la page après envoi
+                            successMessage.innerText = 'La facture a été envoyée avec succès.'; // Message de succès
+                            successMessage.classList.remove('d-none'); // Afficher le message de succès
+                            // Vider les champs du formulaire
+                            this.reset(); // Réinitialiser le formulaire
+                            setTimeout(() => {
+                                $('#emailModal').modal('hide'); // Ferme la modal après un court délai
+                            }, 4000); // Attendre 2 secondes avant de fermer la modal
                         } else {
                             let errors = data.errors;
                             for (let field in errors) {
@@ -127,6 +138,8 @@
                                 errorField.innerHTML = errors[field];
                                 errorField.style.color = 'red';
                             }
+                            errorMessage.innerText = 'Une erreur est survenue'; // Message de succès
+                            errorMessage.classList.remove('d-none');
                         }
                     } catch (error) {
                         console.error('Invalid JSON:', error);
@@ -134,8 +147,6 @@
                 })
 
         });
-
-
     </script>
 
 {% endblock %}
