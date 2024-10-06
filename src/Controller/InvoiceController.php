@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 
 use App\Form\EmailInvoiceType;
@@ -13,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Form\InvoiceType;
 use App\Entity\Invoice;
 
 class InvoiceController extends AbstractController
@@ -22,7 +20,6 @@ class InvoiceController extends AbstractController
     public function index(EntityManagerInterface $entityManager): Response
     {
         $invoices = $entityManager->getRepository(Invoice::class)->findAll();
-
         $emailForm = $this->createForm(EmailInvoiceType::class);
 
         return $this->render('invoice/list.html.twig', [
@@ -35,11 +32,8 @@ class InvoiceController extends AbstractController
     public function createInvoice(Request $request, EntityManagerInterface $entityManager): Response
     {
         $invoice = new Invoice(); // Créer une nouvelle instance de la facture
-
         $form = $this->createForm(InvoiceType::class, $invoice); // Créer le formulaire
-
         $form->handleRequest($request); // Traiter la demande HTTP incoming
-
 
         if ($form->isSubmitted() && $form->isValid()) {
             $billingMonth = $form->get('billingMonth')->getData();
@@ -83,14 +77,12 @@ class InvoiceController extends AbstractController
 
     // Route pour envoyer le PDF par mail
     #[Route('/invoice/send', name: 'invoice_send', methods: ['POST'])]
-    public function sendInvoiceByEmail(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): JsonResponse
+    public function sendInvoiceByEmail(Request $request, MailerInterface $mailer, EntityManagerInterface $entityManager): JsonResponse
     {
         $form = $this->createForm(EmailInvoiceType::class);
         $form->handleRequest($request);
 
-
         if ($form->isSubmitted() && $form->isValid()) {
-
             $data = $form->getData();
             $invoiceId = $request->request->get('id'); // Récupère l'ID de la facture
             $invoice = $entityManager->getRepository(Invoice::class)->find($invoiceId);
@@ -99,15 +91,17 @@ class InvoiceController extends AbstractController
                 return new JsonResponse(['success' => false, 'message' => 'Facture non trouvée.'], 404);
             }
 
-            // Générer le PDF et envoyer l'email
+            // Générer le PDF et préparer l'e-mail
             $pdfOutput = $this->generatePdf($invoice);
             $email = (new Email())
-                ->from('support@pax-tech.com')
+                ->from('invoices@pax-tech.com')
                 ->to($data['to'])
                 ->subject($data['subject'])
                 ->text($data['message'])
                 ->attach($pdfOutput, 'Facture_' . $invoice->getInvoiceNumber() . '.pdf', 'application/pdf');
 
+            // Utiliser le transport "invoices"
+            $email->getHeaders()->addTextHeader('X-Transport', 'invoices');
             $mailer->send($email);
 
             return new JsonResponse(['success' => true]);
@@ -124,13 +118,9 @@ class InvoiceController extends AbstractController
     }
 
 
-
-
     #[Route('/invoice/{id}/html', name: 'invoice_html')]
     public function generatehtml(Invoice $invoice): Response
     {
-        // Configure Dompdf according to your needs
-        // Retourner la réponse avec le PDF généré
         return $this->render('invoice/pdf_for_php.html.twig', [
             'invoice' => $invoice,
         ]);
@@ -160,5 +150,4 @@ class InvoiceController extends AbstractController
         // Retourner le contenu du PDF
         return $dompdf->output();
     }
-
 }
