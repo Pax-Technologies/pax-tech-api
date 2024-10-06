@@ -1,3 +1,7 @@
+body {
+  background-color: #0a0a0a !important;
+}
+
 // Variables pour le thème sombre
 $dark-color: #333;
 $dark-color-light: lighten($dark-color, 5%);
@@ -19,3 +23,18 @@ $dropdown-border-color: $light-color-dark;
 $primary: #00bc70;
 
 @import "bootstrap";
+
+// Styles pour les boutons de pagination désactivés
+.pagination .disabled .page-link {
+  color: #ffffff; /* Couleur du texte */
+  background-color: #6c757d; /* Couleur d'arrière-plan */
+  border-color: #6c757d; /* Couleur de bordure */
+  opacity: 0.7; /* Opacité */
+  cursor: not-allowed; /* Pointeur pour indiquer que le bouton est désactivé */
+}
+
+// Si vous souhaitez également personnaliser le survol
+.pagination .disabled .page-link:hover {
+  background-color: #5a6268; /* Couleur d'arrière-plan au survol */
+  border-color: #545b62; /* Couleur de bordure au survol */
+}
