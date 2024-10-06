@@ -2,14 +2,16 @@
 
 namespace App\Controller;
 
+use App\Form\EmailInvoiceType;
 use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
-use Knp\Snappy\Pdf;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Form\InvoiceType;
 use App\Entity\Invoice;
@@ -17,14 +19,18 @@ use App\Entity\Invoice;
 class InvoiceController extends AbstractController
 {
     #[Route('/invoices', name: 'invoices')]
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
         $invoices = $entityManager->getRepository(Invoice::class)->findAll();
 
+        $emailForm = $this->createForm(EmailInvoiceType::class);
+
         return $this->render('invoice/list.html.twig', [
             'invoices' => $invoices,
+            'emailForm' => $emailForm->createView(),
         ]);
     }
+
     #[Route('/invoice/create', name: 'create_invoice')]
     public function createInvoice(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -43,8 +49,8 @@ class InvoiceController extends AbstractController
 
             $invoice->setInvoiceNumber($invoiceDate);  // Définir le numéro de facture
             // Ici, nous pourrions sauvegarder l'entité dans la base de données
-             $entityManager->persist($invoice);
-             $entityManager->flush();
+            $entityManager->persist($invoice);
+            $entityManager->flush();
 
             // Puis rediriger l'utilisateur vers une autre page
             return $this->redirectToRoute('invoices');
@@ -55,7 +61,7 @@ class InvoiceController extends AbstractController
         ]);
     }
 
-    #[Route('/invoice/{id}', name: 'invoice_show')]
+    #[Route('/invoice/{id<\d+>}', name: 'invoice_show')]
     public function show(Invoice $invoice): Response
     {
         return $this->render('invoice/show.html.twig', [
@@ -64,63 +70,61 @@ class InvoiceController extends AbstractController
     }
 
     #[Route('/invoice/{id}/pdf', name: 'invoice_pdf')]
-    public function generatePdf(Invoice $invoice): Response
+    public function viewPdf(Invoice $invoice): Response
     {
-        // Configure Dompdf according to your needs
-        $pdfOptions = new Options();
-        $pdfOptions->set('defaultFont', 'Arial');
-        $pdfOptions->setIsHtml5ParserEnabled(true);
-        $pdfOptions->setFontCache('fonts');
-
-        // Instantiate Dompdf with options
-        $dompdf = new Dompdf($pdfOptions);
-        $dompdf->set_option('isRemoteEnabled', true);
-
-        // Récupérer le contenu HTML que tu veux convertir en PDF
-        $html = $this->renderView('invoice/pdf_for_php.html.twig', [
-            'invoice' => $invoice
-        ]);
-
-        // Charger le HTML dans Dompdf
-        $dompdf->loadHtml($html);
-
-        // (Facultatif) Configurer le format de la page et l'orientation
-        $dompdf->setPaper('A4', 'portrait');
-
-        // Rendre le PDF
-        $dompdf->render();
-
-        // Stocker le PDF dans une variable pour envoi par email ou autre
-        $output = $dompdf->output();
-
-        $year = substr($invoice->getInvoiceNumber(), 0, 4);
-        $month = substr($invoice->getInvoiceNumber(), 4, 2);
-
-// Chemin où vous souhaitez sauvegarder le PDF
-        $pdfDirectory = $this->getParameter('pdf_directory'); // Assurez-vous que ce paramètre est défini dans services.yaml
-
-// Créer le chemin du dossier basé sur l'année et le mois
-        $invoiceDirectory = $pdfDirectory . '/' . $year . '/' . $month;
-
-// Créer le répertoire si il n'existe pas
-        if (!file_exists($invoiceDirectory)) {
-            mkdir($invoiceDirectory, 0777, true);
-        }
-
-        // Remplacez les espaces dans le nom de l'entreprise par des tirets bas
+        $pdfOutput = $this->generatePdf($invoice);
         $companyNameWithUnderscores = str_replace(' ', '_', $invoice->getClient()->getCompany());
 
-        $pdfFilePath = $invoiceDirectory . '/Facture_'  . $invoice->getInvoiceNumber(). '_' . $companyNameWithUnderscores . '.pdf';
-
-// Enregistrer le PDF sur le serveur
-        file_put_contents($pdfFilePath, $output);
-
-// Retourner la réponse avec le PDF généré
-        return new Response($output, 200, [
+        return new Response($pdfOutput, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="Facture_' . $invoice->getInvoiceNumber(). '_' . $companyNameWithUnderscores . '.pdf"',
+            'Content-Disposition' => 'inline; filename="Facture_' . $invoice->getInvoiceNumber() . '_' . $companyNameWithUnderscores . '.pdf"'
         ]);
     }
+
+    // Route pour envoyer le PDF par mail
+    #[Route('/invoice/send', name: 'invoice_send', methods: ['POST'])]
+    public function sendInvoiceByEmail(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): JsonResponse
+    {
+        $form = $this->createForm(EmailInvoiceType::class);
+        $form->handleRequest($request);
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $data = $form->getData();
+            $invoiceId = $request->request->get('id'); // Récupère l'ID de la facture
+            $invoice = $entityManager->getRepository(Invoice::class)->find($invoiceId);
+
+            if (!$invoice) {
+                return new JsonResponse(['success' => false, 'message' => 'Facture non trouvée.'], 404);
+            }
+
+            // Générer le PDF et envoyer l'email
+            $pdfOutput = $this->generatePdf($invoice);
+            $email = (new Email())
+                ->from('support@pax-tech.com')
+                ->to($data['to'])
+                ->subject($data['subject'])
+                ->text($data['message'])
+                ->attach($pdfOutput, 'Facture_' . $invoice->getInvoiceNumber() . '.pdf', 'application/pdf');
+
+            $mailer->send($email);
+
+            return new JsonResponse(['success' => true]);
+        }
+
+        // Si le formulaire n'est pas valide, renvoyer les erreurs
+        $errors = [];
+        foreach ($form->getErrors(true) as $error) {
+            $field = $error->getOrigin()->getName();  // Nom du champ avec erreur
+            $errors[$field] = $error->getMessage();   // Message d'erreur
+        }
+
+        return new JsonResponse(['success' => false, 'errors' => $errors], 400);
+    }
+
+
+
 
     #[Route('/invoice/{id}/html', name: 'invoice_html')]
     public function generatehtml(Invoice $invoice): Response
@@ -130,6 +134,31 @@ class InvoiceController extends AbstractController
         return $this->render('invoice/pdf_for_php.html.twig', [
             'invoice' => $invoice,
         ]);
+    }
+
+    private function generatePdf(Invoice $invoice): string
+    {
+        // Configuration Dompdf
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $pdfOptions->setIsHtml5ParserEnabled(true);
+
+        // Initialisation de Dompdf
+        $dompdf = new Dompdf($pdfOptions);
+        $dompdf->set_option('isRemoteEnabled', true);
+
+        // Récupérer le contenu HTML
+        $html = $this->renderView('invoice/pdf_for_php.html.twig', [
+            'invoice' => $invoice
+        ]);
+
+        // Charger le HTML dans Dompdf
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Retourner le contenu du PDF
+        return $dompdf->output();
     }
 
 }

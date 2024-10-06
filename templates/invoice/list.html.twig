@@ -4,6 +4,16 @@
 
 {% block body %}
     <div class="container my-4">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
         <h2 class="mb-4">Liste des factures</h2>
         <table class="table table-striped" id="invoices-table">
             <thead class="table-dark">
@@ -12,6 +22,7 @@
                 <th>Numéro de facture</th>
                 <th>Détail</th>
                 <th>Voir le PDF</th>
+                <th>Envoyer</th>
             </tr>
             </thead>
             <tbody>
@@ -19,12 +30,112 @@
                 <tr>
                     <td class="text-white">{{ invoice.client.company }}</td>
                     <td class="text-white">{{ invoice.invoiceNumber }}</td>
-                    <td class="text-center"><a class="link-underline link-underline-opacity-0" href="{{ path('invoice_show', {id: invoice.id}) }}"><i class="bi bi-eye"></i></a></td>
-                    <td class="text-center"><a class="link-underline link-underline-opacity-0" href="{{ path('invoice_pdf', {id: invoice.id}) }}" target="_blank"><i class="bi bi-file-pdf"></i></a></td>
+                    <td class="text-center">
+                        <a class="link-underline link-underline-opacity-0" href="{{ path('invoice_show', {id: invoice.id}) }}">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        <a class="link-underline link-underline-opacity-0" href="{{ path('invoice_pdf', {id: invoice.id}) }}" target="_blank">
+                            <i class="bi bi-file-pdf"></i>
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emailModal" data-id="{{ invoice.id }}">Envoyer par mail</button>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="emailModalLabel">Envoyer la facture par email</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="sendEmailForm" method="post" action="{{ path('invoice_send') }}">
+                        <div class="mb-3">
+                            {{ form_row(emailForm.to) }} <!-- Email du destinataire -->
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(emailForm.subject) }} <!-- Sujet de l'email -->
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(emailForm.message) }} <!-- Message -->
+                        </div>
+                        <input type="hidden" id="id" name="id" value="">
+                        {{ form_row(emailForm._token) }} <!-- CSRF Token -->
+                        <button type="submit" class="btn btn-success">Envoyer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+
+
+    <script>
+        // Écouter les événements sur les boutons qui ouvrent le modal
+        document.querySelectorAll('button[data-bs-toggle="modal"]').forEach(button => {
+            button.addEventListener('click', function() {
+                // Récupérer l'ID de la facture depuis l'attribut data-id
+                const invoiceId = this.getAttribute('data-id');
+                // Injecter l'ID dans le champ caché du formulaire dans le modal
+                document.getElementById('id').value = invoiceId;
+            });
+        });
+
+
+        document.getElementById('sendEmailForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Empêche la soumission traditionnelle du formulaire
+
+            const formData = new FormData(this);
+
+            // Vérifier les données envoyées
+            for (var pair of formData.entries()) {
+                console.log(pair[0]+ ': ' + pair[1]);
+            }
+
+            const url = this.action; // L'URL d'envoi du formulaire (chemin vers invoice_send)
+
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest' // Indique que c'est une requête AJAX
+                }
+            })
+                .then(response => {
+                    console.log('Response:', response);
+                    return response.text(); // Récupérer la réponse sous forme de texte
+                })
+                .then(text => {
+                    console.log('Response text:', text); // Afficher le texte de la réponse
+                    // Tenter de le convertir en JSON si le texte est un JSON valide
+                    try {
+                        const data = JSON.parse(text);
+                        if (data.success) {
+                            alert('La facture a été envoyée avec succès.');
+                            location.reload(); // Optionnel, pour recharger la page après envoi
+                        } else {
+                            let errors = data.errors;
+                            for (let field in errors) {
+                                let errorField = document.getElementById(field).nextElementSibling;
+                                errorField.innerHTML = errors[field];
+                                errorField.style.color = 'red';
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Invalid JSON:', error);
+                    }
+                })
+
+        });
+
+
+    </script>
+
 {% endblock %}

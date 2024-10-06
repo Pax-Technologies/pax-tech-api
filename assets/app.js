@@ -13,36 +13,12 @@ import './styles/app.css';
 import $ from 'jquery';
 
 global.$ = global.jQuery = $;
+import 'bootstrap';
 import 'datatables.net';
 
 import 'datatables.net-bs5';
 
 $(document).ready( function () {
     $('#invoices-table').DataTable();
+
 } );
-
-//Script for invoice table
-// $(document).ready(function() {
-//     var table = $('#invoices-table').DataTable();
-//
-//     // Create input search for every column
-//     $('#invoices-table tfoot th').each( function () {
-//         var title = $(this).text();
-//         $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
-//     } );
-//
-//     // Apply the search
-//     table.columns().every( function () {
-//         var that = this;
-//
-//         $( 'input', this.footer() ).on( 'keyup change clear', function () {
-//             if ( that.search() !== this.value ) {
-//                 that
-//                     .search( this.value )
-//                     .draw();
-//             }
-//         } );
-//     } );
-// });
-
-
