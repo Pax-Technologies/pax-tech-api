@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Email</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+        body {
+            font-family: 'Lato', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<p>{{ message|raw }}</p>
+
+<table cellpadding="0" cellspacing="0" border="0">
+    <tr>
+        <td style="padding-left: 40px;">
+            <img src="{{ absolute_url(asset('email_signature/PaxTech-Horizontal-Tagline[Cropped].png')) }}" alt="PaxTech">
+        </td>
+        <td style="padding-left: 40px; padding-right: 40px;">
+            <img src="{{ absolute_url(asset('email_signature/barv.png')) }}" alt="Separator">
+        </td>
+        <td>
+            <p style="margin-top:10px;margin-bottom:0;font-size:20px;"><b>Bryan PÂQUES</b></p>
+            <p style="margin-top:3px; margin-bottom:10px;font-size:14px;">Founder</p>
+            <p style="font-size:14px;margin-top: 20px;">
+                <a href="https://www.facebook.com/paxtechno"><img src="{{ absolute_url(asset('email_signature/icon-facebook.png')) }}" alt="Facebook"></a>
+                <a href="https://www.instagram.com/paxtechnologies/"><img src="{{ absolute_url(asset('email_signature/icon-instagram.png')) }}" alt="Instagram"></a>
+                <a href="https://www.linkedin.com/in/bryan-paques/"><img src="{{ absolute_url(asset('email_signature/icon-linkedin.png')) }}" alt="LinkedIn"></a>
+                <a href="https://www.pax-tech.com"><img src="{{ absolute_url(asset('email_signature/icon-globe.png')) }}" alt="Website"></a>
+            </p>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

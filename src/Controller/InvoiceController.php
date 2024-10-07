@@ -5,6 +5,7 @@ use App\Form\EmailInvoiceType;
 use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -84,26 +85,34 @@ class InvoiceController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $invoiceId = $request->request->get('id'); // Récupère l'ID de la facture
+            $invoiceId = $request->request->get('id');
             $invoice = $entityManager->getRepository(Invoice::class)->find($invoiceId);
 
             if (!$invoice) {
                 return new JsonResponse(['success' => false, 'message' => 'Facture non trouvée.'], 404);
             }
 
-            // Générer le PDF et préparer l'e-mail
+            // Générer le PDF de la facture
             $pdfOutput = $this->generatePdf($invoice);
-            $email = (new Email())
+
+            // Préparer l'email avec la signature HTML
+            $email = (new TemplatedEmail())
                 ->from('invoices@pax-tech.com')
                 ->to($data['to'])
+                ->addBcc('invoices@pax-tech.com')
                 ->subject($data['subject'])
-                ->text($data['message'])
+                ->text($data['message'])  // Version texte si nécessaire
+                ->htmlTemplate('emails/invoice_email.html.twig')  // Template avec signature
+                ->context([
+                    'message' => nl2br($data['message']),  // Le message dynamique à passer au template
+                ])
                 ->attach($pdfOutput, 'Facture_' . $invoice->getInvoiceNumber() . '.pdf', 'application/pdf');
 
             // Utiliser le transport "invoices"
             $email->getHeaders()->addTextHeader('X-Transport', 'invoices');
             $mailer->send($email);
 
+            // Marquer la facture comme envoyée par e-mail
             $invoice->setEmailSent(true);
             $entityManager->persist($invoice);
             $entityManager->flush();
@@ -111,14 +120,7 @@ class InvoiceController extends AbstractController
             return new JsonResponse(['success' => true]);
         }
 
-        // Si le formulaire n'est pas valide, renvoyer les erreurs
-        $errors = [];
-        foreach ($form->getErrors(true) as $error) {
-            $field = $error->getOrigin()->getName();  // Nom du champ avec erreur
-            $errors[$field] = $error->getMessage();   // Message d'erreur
-        }
-
-        return new JsonResponse(['success' => false, 'errors' => $errors], 400);
+        return new JsonResponse(['success' => false, 'message' => 'Formulaire invalide.'], 400);
     }
 
 
