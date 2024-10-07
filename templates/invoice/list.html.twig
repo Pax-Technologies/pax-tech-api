@@ -20,9 +20,9 @@
             <tr class="border-white">
                 <th>Nom de l'entreprise</th>
                 <th>Numéro de facture</th>
-                <th>Détail</th>
-                <th>Voir le PDF</th>
-                <th>Envoyer</th>
+                <th class="text-center">Détail</th>
+                <th class="text-center">Voir le PDF</th>
+                <th class="text-center">Email</th>
             </tr>
             </thead>
             <tbody>
@@ -41,7 +41,11 @@
                         </a>
                     </td>
                     <td class="text-center">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emailModal" data-id="{{ invoice.id }}" data-email="{{ invoice.client.email }}">Envoyer par mail</button>
+                        {% if invoice.emailSent %}
+                            <i class="bi bi-check-lg text-secondary"></i><span class="text-secondary small">&nbsp; Envoyé</span>
+                        {% else %}
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emailModal" data-id="{{ invoice.id }}" data-email="{{ invoice.client.email }}">Envoyer par mail</button>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
@@ -132,7 +136,10 @@
                             this.reset(); // Réinitialiser le formulaire
                             setTimeout(() => {
                                 $('#emailModal').modal('hide'); // Ferme la modal après un court délai
-                            }, 4000); // Attendre 2 secondes avant de fermer la modal
+                                successMessage.classList.add('d-none'); // Cacher le message de succès
+                                const invoiceId = document.getElementById('id').value;
+                                $(`button[data-id="${invoiceId}"]`).parent().text('Envoyé');
+                            }, 4000); // Attendre 4 secondes avant de fermer la modal
                         } else {
                             let errors = data.errors;
                             for (let field in errors) {
