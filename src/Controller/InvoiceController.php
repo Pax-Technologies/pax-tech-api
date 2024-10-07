@@ -104,6 +104,10 @@ class InvoiceController extends AbstractController
             $email->getHeaders()->addTextHeader('X-Transport', 'invoices');
             $mailer->send($email);
 
+            $invoice->setEmailSent(true);
+            $entityManager->persist($invoice);
+            $entityManager->flush();
+
             return new JsonResponse(['success' => true]);
         }
 

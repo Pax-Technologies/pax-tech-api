@@ -41,7 +41,7 @@
                         </a>
                     </td>
                     <td class="text-center">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emailModal" data-id="{{ invoice.id }}">Envoyer par mail</button>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emailModal" data-id="{{ invoice.id }}" data-email="{{ invoice.client.email }}">Envoyer par mail</button>
                     </td>
                 </tr>
             {% endfor %}
@@ -85,8 +85,10 @@
             button.addEventListener('click', function() {
                 // Récupérer l'ID de la facture depuis l'attribut data-id
                 const invoiceId = this.getAttribute('data-id');
+                const email = this.getAttribute('data-email');
                 // Injecter l'ID dans le champ caché du formulaire dans le modal
                 document.getElementById('id').value = invoiceId;
+                document.getElementById('email_invoice_to').value = email;
             });
         });
 

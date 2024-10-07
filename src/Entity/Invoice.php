@@ -46,6 +46,9 @@ class Invoice
     #[ORM\OneToMany(targetEntity: InvoiceDetail::class, mappedBy: 'invoice', orphanRemoval: true, cascade: ["persist"])]
     private Collection $invoiceDetails;
 
+    #[ORM\Column]
+    private ?bool $emailSent = false;
+
     public function __construct()
     {
         $this->invoiceDetails = new ArrayCollection();
@@ -182,5 +185,17 @@ class Invoice
             default:
                 return 'Statut inconnu';
         }
+    }
+
+    public function isEmailSent(): ?bool
+    {
+        return $this->emailSent;
+    }
+
+    public function setEmailSent(bool $emailSent): static
+    {
+        $this->emailSent = $emailSent;
+
+        return $this;
     }
 }
