@@ -43,6 +43,15 @@ class InvoiceType extends AbstractType
                 'data' => date('Y'),
                 'mapped' => false,  // Ce champ est non mappé
             ])
+            ->add('periodicity', ChoiceType::class, [
+                'choices' => [
+                    '' => null,
+                    '1 an' => '1 year',
+                    '6 mois' => '6 months',
+                    '3 mois' => '3 months',
+                    '1 mois' => '1 month'
+                ]
+            ])
             ->add('totalAmountNet')
             ->add('totalVatAmount')
             ->add('totalAmountGross')

@@ -49,6 +49,9 @@ class Invoice
     #[ORM\Column]
     private ?bool $emailSent = false;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $periodicity = null;
+
     public function __construct()
     {
         $this->invoiceDetails = new ArrayCollection();
@@ -197,5 +200,35 @@ class Invoice
         $this->emailSent = $emailSent;
 
         return $this;
+    }
+
+    public function getPeriodicity(): ?string
+    {
+        return $this->periodicity;
+    }
+
+    public function setPeriodicity(?string $periodicity): static
+    {
+        $this->periodicity = $periodicity;
+
+        return $this;
+    }
+
+    public function cloneWithoutInvoiceDetails()
+    {
+        $newInvoice = new Invoice();
+        $newInvoice->setDate(clone $this->getDate());
+        $newInvoice->setClient($this->getClient());
+        $newInvoice->setTotalAmountNet($this->getTotalAmountNet());
+        $newInvoice->setTotalVatAmount($this->getTotalVatAmount());
+        $newInvoice->setTotalAmountGross($this->getTotalAmountGross());
+        $newInvoice->setInvoiceNumber($this->getInvoiceNumber());
+        $newInvoice->setStatus($this->getStatus());
+        $newInvoice->setEmailSent($this->isEmailSent());
+        $newInvoice->setPeriodicity($this->getPeriodicity());
+
+        // pas besoin de définir InvoiceDetails car il est initialisé en tant que ArrayCollection vide dans le constructeur
+
+        return $newInvoice;
     }
 }
