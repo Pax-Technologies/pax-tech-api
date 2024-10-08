@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Invoice;
+use App\Entity\InvoiceDetail;
 use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -27,36 +28,44 @@ class InvoiceService
 
     public function checkInvoicesAndSendEmails(): void
     {
-        $invoiceRepository = $this->entityManager->getRepository(Invoice::class);
+        $invoiceDetailRepository = $this->entityManager->getRepository(InvoiceDetail::class);
 
-        $invoices = $invoiceRepository->findAll();
+        // Change this line to find all InvoiceDetails instead of Invoices
+        $invoiceDetails = $invoiceDetailRepository->findAll();
 
-        foreach ($invoices as $invoice) {
-            $nextInvoiceDate = clone $invoice->getDate();
-            if ($invoice->getPeriodicity() && $nextInvoiceDate->modify('+' . $invoice->getPeriodicity()) <= new \DateTimeImmutable()) {
-                // Créer une nouvelle facture avec la même date de facturation
-                $newInvoice = $invoice->cloneWithoutInvoiceDetails();
-                $newInvoice->setDate(new \DateTime());
-                $invoiceDate = $newInvoice->getDate()->format('Ym');  // Y = year (4 digits), m = month (2 digits)
+        $invoicesToBeCreated = [];
 
-                $newInvoice->setInvoiceNumber($invoiceDate);
-                $newInvoice->setStatus(2); // La facture est par défaut non payée
-
-                // Créer de nouvelles factures détails basées sur les anciennes
-                foreach ($invoice->getInvoiceDetails() as $invoiceDetail) {
-                    $newInvoiceDetail = clone $invoiceDetail;
-                    $newInvoiceDetail->setDescription("Renouvellement - " . $invoiceDetail->getDescription());
-                    $newInvoice->addInvoiceDetail($newInvoiceDetail);
-                }
-//                @TODO il y a les invoices details de la facture originelle sur les novelles factures
-
-                // Persist the new invoice
-                $this->entityManager->persist($newInvoice);
-                $this->entityManager->flush();
-
-                // Après avoir créé la nouvelle facture, vous pouvez envoyer l'email
-                $this->sendEmail($newInvoice);
+        foreach ($invoiceDetails as $invoiceDetail) {
+            $nextInvoiceDate = clone $invoiceDetail->getInvoice()->getDate();
+            if ($invoiceDetail->getPeriodicity() && $nextInvoiceDate->modify('+' . $invoiceDetail->getPeriodicity()) <= new \DateTimeImmutable()) {
+                // Group invoice details by invoice ID
+                $invoicesToBeCreated[$invoiceDetail->getInvoice()->getId()][] = $invoiceDetail;
             }
+        }
+
+        foreach ($invoicesToBeCreated as $invoiceId => $invoiceDetails) {
+            // Use any of the invoice details to clone the invoice, they all belong to the same one.
+            $invoice = $invoiceDetails[0]->getInvoice();
+            $newInvoice = $invoice->cloneWithoutInvoiceDetails();
+            $newInvoice->setDate(new \DateTime());
+            $invoiceDate = $newInvoice->getDate()->format('Ym');  // Y = year (4 digits), m = month (2 digits)
+
+            $newInvoice->setInvoiceNumber($invoiceDate);
+            $newInvoice->setStatus(2); // Invoice is by default not paid
+
+            // Create new invoice details based on the old ones
+            foreach ($invoiceDetails as $invoiceDetail) {
+                $newInvoiceDetail = $invoiceDetail->cloneWithoutPeriodicity();
+                $newInvoiceDetail->setDescription("Renouvellement - " . $invoiceDetail->getDescription());
+                $newInvoice->addInvoiceDetail($newInvoiceDetail);
+            }
+
+            // Persist the new invoice
+            $this->entityManager->persist($newInvoice);
+            $this->entityManager->flush();
+
+            // After creating the new invoice, you can send the email.
+            $this->sendEmail($newInvoice);
         }
     }
 

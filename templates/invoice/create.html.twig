@@ -38,7 +38,7 @@
                                 {{ form_row(invoiceForm.date, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
                                 {{ form_row(invoiceForm.billingMonth, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
                                 {{ form_row(invoiceForm.billingYear, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
-                                {{ form_row(invoiceForm.periodicity, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
+{#                                {{ form_row(invoiceForm.periodicity, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}#}
                             </div>
                             <div class="col-md-3">
                                 {{ form_row(invoiceForm.status, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
@@ -88,12 +88,13 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th class="col-4 text-white-50">Description</th>
+                                <th class="col-3 text-white-50">Description</th>
                                 <th class="col-2 text-white-50">Prix unitaire</th>
                                 <th class="col-1 text-white-50">Quantité</th>
                                 <th class="col-2 text-white-50">Total HTVA</th>
                                 <th class="col-1 text-white-50">TVA (%)</th>
                                 <th class="col-2 text-white-50">Total TVAC</th>
+                                <th class="col-1 text-white-50">Periodicité</th>
                                 <th></th>
                             </tr>
                             </thead>
