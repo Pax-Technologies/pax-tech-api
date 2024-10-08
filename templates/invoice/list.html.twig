@@ -15,6 +15,9 @@
             </div>
         {% endfor %}
         <h2 class="mb-4">Liste des factures</h2>
+        <div class="text-end">
+            <a type="button" class="btn btn-outline-primary mb-5" href="{{ path('create_invoice') }}">Nouvelle facture</a>
+        </div>
         <table class="table table-striped" id="invoices-table">
             <thead class="table-dark">
             <tr class="border-white">
@@ -51,6 +54,7 @@
             {% endfor %}
             </tbody>
         </table>
+
     </div>
 
     <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">

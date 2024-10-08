@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Form\EmailInvoiceType;
+use App\Form\InvoiceType;
 use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;

@@ -35,6 +35,9 @@ class InvoiceDetail
     #[ORM\Column]
     private ?float $totalIncl = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $periodicity = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -122,5 +125,32 @@ class InvoiceDetail
         $this->totalIncl = $totalIncl;
 
         return $this;
+    }
+
+    public function getPeriodicity(): ?string
+    {
+        return $this->periodicity;
+    }
+
+    public function setPeriodicity(?string $periodicity): static
+    {
+        $this->periodicity = $periodicity;
+
+        return $this;
+    }
+
+    public function cloneWithoutPeriodicity()
+    {
+        $newInvoiceDetail = new InvoiceDetail();
+        $newInvoiceDetail->setInvoice($this->getInvoice());
+        $newInvoiceDetail->setDescription($this->getDescription());
+        $newInvoiceDetail->setUnitPriceExcl($this->getUnitPriceExcl());
+        $newInvoiceDetail->setQuantity($this->getQuantity());
+        $newInvoiceDetail->setTotalExcl($this->getTotalExcl());
+        $newInvoiceDetail->setVatRate($this->getVatRate());
+        $newInvoiceDetail->setTotalIncl($this->getTotalIncl());
+        // Nous omettons setPeriodicity afin d'obtenir la nouvelle instance sans periodicity
+
+        return $newInvoiceDetail;
     }
 }
