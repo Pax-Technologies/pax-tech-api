@@ -8,6 +8,7 @@
             width: 100%;
             box-sizing: border-box;
         }
+
         #invoice-details .form-control {
             /*border-left: none;*/
             /*border-top: none;*/
@@ -15,139 +16,150 @@
             /*border-radius: 0;*/
             /*box-shadow: none;*/
         }
+
         #invoice-details tr {
             border: transparent;
         }
+
         .button-line {
             flex: 1;
             height: 2px;
             background-color: var(--bs-primary);
         }
     </style>
-    <div class="container">
-        <h1 class="my-4">Nouvelle facture</h1>
 
-        {{ form_start(invoiceForm, {'attr': {'class': 'mb-4'}}) }}
+        <div class="container">
+            <h1 class="my-4">Nouvelle facture</h1>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="card mb-4">
-                    <div class="card-header small">
-                        <div class="row justify-content-between">
-                            <div class="col-md-3">
-                                {{ form_row(invoiceForm.date, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
-                                {{ form_row(invoiceForm.billingMonth, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
-                                {{ form_row(invoiceForm.billingYear, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
-{#                                {{ form_row(invoiceForm.periodicity, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}#}
+            {{ form_start(invoiceForm, {'attr': {'class': 'mb-4'}}) }}
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-header small">
+                            <div class="row justify-content-between">
+                                <div class="col-md-3">
+                                    {{ form_row(invoiceForm.date, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
+                                    {{ form_row(invoiceForm.billingMonth, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
+                                    {{ form_row(invoiceForm.billingYear, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
+                                    {#                                {{ form_row(invoiceForm.periodicity, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }} #}
+                                </div>
+                                <div class="col-md-3">
+                                    {{ form_row(invoiceForm.status, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
+                                </div>
                             </div>
-                            <div class="col-md-3">
-                                {{ form_row(invoiceForm.status, {'attr': {'class': 'form-control'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
+                            <div class="row justify-content-end mt-1">
+                                <div class="col-md-3">
+                                    {{ form_row(invoiceForm.invoiceNumber, {'attr': {'class': 'form-control border border-black', 'readonly': 'readonly'}, 'label_attr': {'class': 'text-white-50 mb-2'}}) }}
+                                </div>
                             </div>
-                        </div>
-                        <div class="row justify-content-end mt-1">
-                            <div class="col-md-3">
-                                {{ form_row(invoiceForm.invoiceNumber, {'attr': {'class': 'form-control border border-black', 'readonly': 'readonly'}, 'label_attr': {'class': 'text-white-50 mb-2'}}) }}
-                            </div>
-                        </div>
-                        <div class="row mt-4">
-                            <div class="col-md-4 d-flex flex-column">
+                            <div class="row mt-4">
+                                <div class="col-md-4 d-flex flex-column">
                                     {{ form_row(invoiceForm.client, {'attr': {'class': 'form-control mb-2'}, 'label_attr': {'class': 'text-white-50 mb-1'}}) }}
-                                    <input type="text" id="vatNumber" class="form-control mb-2 border border-black" readonly>
-                                    <input type="text" id="phone" class="form-control mb-2 border border-black" readonly>
-                                    <input type="text" id="email" class="form-control mb-2 border border-black" readonly>
-                            </div>
-                            <div class="col-md-7 mt-4">
-                                <div class="row">
-                                    <div class="col-2">
-                                        <input type="text" id="houseNumber" class="form-control mb-2 border border-black" readonly>
-                                    </div>
-                                    <div class="col-3">
-                                        <input type="text" id="cptInfo" class="form-control mb-2 border border-black" readonly>
-                                    </div>
-                                    <div class="col-7">
-                                        <input type="text" id="street" class="form-control mb-2 border border-black" readonly>
-                                    </div>
+                                    <input type="text" id="vatNumber" class="form-control mb-2 border border-black"
+                                           readonly>
+                                    <input type="text" id="phone" class="form-control mb-2 border border-black"
+                                           readonly>
+                                    <input type="text" id="email" class="form-control mb-2 border border-black"
+                                           readonly>
                                 </div>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <input type="text" id="postalCode" class="form-control mb-2 border border-black" readonly>
+                                <div class="col-md-7 mt-4">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <input type="text" id="houseNumber"
+                                                   class="form-control mb-2 border border-black" readonly>
+                                        </div>
+                                        <div class="col-3">
+                                            <input type="text" id="cptInfo"
+                                                   class="form-control mb-2 border border-black" readonly>
+                                        </div>
+                                        <div class="col-7">
+                                            <input type="text" id="street" class="form-control mb-2 border border-black"
+                                                   readonly>
+                                        </div>
                                     </div>
-                                    <div class="col-5">
-                                        <input type="text" id="city" class="form-control mb-2 border border-black" readonly>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <input type="text" id="postalCode"
+                                                   class="form-control mb-2 border border-black" readonly>
+                                        </div>
+                                        <div class="col-5">
+                                            <input type="text" id="city" class="form-control mb-2 border border-black"
+                                                   readonly>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" id="country"
+                                                   class="form-control mb-2 border border-black" readonly>
+                                        </div>
                                     </div>
-                                    <div class="col-4">
-                                        <input type="text" id="country" class="form-control mb-2 border border-black" readonly>
-                                    </div>
-                                </div>
 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="text-white-50">Détails de la facture</h4>
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="col-3 text-white-50">Description</th>
+                                    <th class="col-2 text-white-50">Prix unitaire</th>
+                                    <th class="col-1 text-white-50">Quantité</th>
+                                    <th class="col-2 text-white-50">Total HTVA</th>
+                                    <th class="col-1 text-white-50">TVA (%)</th>
+                                    <th class="col-2 text-white-50">Total TVAC</th>
+                                    <th class="col-1 text-white-50">Periodicité</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody data-index="0" id="invoice-details"
+                                       data-prototype="{{ form_widget(invoiceForm.invoiceDetails.vars.prototype)|e('html_attr') }}">
+                                {% for detailForm in invoiceForm.invoiceDetails %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <button type="button" class="btn btn-link btn-lg w-50" id="add-invoice-detail"
+                                    style="display: flex; align-items: center;">
+                                <div class="button-line"></div>
+                                <i class="bi bi-plus-circle ms-2 me-2 bi-lg"></i>
+                                <div class="button-line"></div>
+                            </button>
+                        </div>
+                        <div class="card-footer d-flex flex-column align-items-end pt-5">
+                            {{ form_row(invoiceForm.totalAmountNet, {'label': 'Total HTVA', 'attr': {'class': 'form-control border border-black', 'readonly': 'readonly'}, 'label_attr': {'class': 'text-white-50 small'}}) }}
+                            {{ form_row(invoiceForm.totalVatAmount, {'label': 'Total TVA', 'attr': {'class': 'form-control border border-black', 'readonly': 'readonly'}, 'label_attr': {'class': 'text-white-50 small'}}) }}
+                            <div class="mt-3 mb-2">
+                                {{ form_row(invoiceForm.totalAmountGross, {'label': 'TOTAL', 'attr': {'class': 'form-control border border-4', 'readonly': 'readonly'}, 'label_attr': {'class': 'fs-5'}}) }}
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <h4 class="text-white-50">Détails de la facture</h4>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th class="col-3 text-white-50">Description</th>
-                                <th class="col-2 text-white-50">Prix unitaire</th>
-                                <th class="col-1 text-white-50">Quantité</th>
-                                <th class="col-2 text-white-50">Total HTVA</th>
-                                <th class="col-1 text-white-50">TVA (%)</th>
-                                <th class="col-2 text-white-50">Total TVAC</th>
-                                <th class="col-1 text-white-50">Periodicité</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody data-index="0" id="invoice-details" data-prototype="{{ form_widget(invoiceForm.invoiceDetails.vars.prototype)|e('html_attr')}}">
-                            {% for detailForm in invoiceForm.invoiceDetails %}
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                    <button type="button" class="btn btn-link btn-lg w-50" id="add-invoice-detail" style="display: flex; align-items: center;">
-                        <div class="button-line"></div>
-                        <i class="bi bi-plus-circle ms-2 me-2 bi-lg"></i>
-                        <div class="button-line"></div>
-                    </button>
-                    </div>
-                    <div class="card-footer d-flex flex-column align-items-end pt-5">
-                        {{ form_row(invoiceForm.totalAmountNet, {'label': 'Total HTVA', 'attr': {'class': 'form-control border border-black', 'readonly': 'readonly'}, 'label_attr': {'class': 'text-white-50 small'}}) }}
-                        {{ form_row(invoiceForm.totalVatAmount, {'label': 'Total TVA', 'attr': {'class': 'form-control border border-black', 'readonly': 'readonly'}, 'label_attr': {'class': 'text-white-50 small'}}) }}
-                        <div class="mt-3 mb-2">
-                            {{ form_row(invoiceForm.totalAmountGross, {'label': 'TOTAL', 'attr': {'class': 'form-control border border-4', 'readonly': 'readonly'}, 'label_attr': {'class': 'fs-5'}}) }}
-                        </div>
-                    </div>
-                    </div>
 
-               </div>
+                </div>
 
             </div>
-        <button type="submit" class="btn btn-success">Créer une facture</button>
+            <button type="submit" class="btn btn-success">Créer une facture</button>
         </div>
         {{ form_end(invoiceForm) }}
-    </div>
-{% endblock %}
 
-{% block javascripts %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
 
-            const fetchClientDetails = function() {
+            const fetchClientDetails = function () {
                 const selectedClientId = $('#invoice_client').val();
 
                 $.ajax({
                     url: '/client/' + selectedClientId,
                     type: 'GET',
                     dataType: 'json',
-                    success: function(data) {
+                    success: function (data) {
                         $('#company').val(data['company']);
                         $('#vatNumber').val(data['vatNumber']);
                         $('#phone').val(data['phone']);
                         $('#email').val(data['email']);
 
-                        if(data['address']) {
+                        if (data['address']) {
                             $('#houseNumber').val(data['address']['number']);
                             $('#cptInfo').val(data['address']['cptInfo']);
                             $('#street').val(data['address']['street']);
@@ -161,18 +173,18 @@
 
             fetchClientDetails();
 
-            const recalculateTotalAmounts = function() {
+            const recalculateTotalAmounts = function () {
                 let totalExcl = 0.0;
                 let totalIncl = 0.0;
 
-                $('input[id$=_totalExcl]').each(function() {
+                $('input[id$=_totalExcl]').each(function () {
                     const val = parseFloat($(this).val());
                     if (!isNaN(val)) {
                         totalExcl += val;
                     }
                 });
 
-                $('input[id$=_totalIncl]').each(function() {
+                $('input[id$=_totalIncl]').each(function () {
                     const val = parseFloat($(this).val());
                     if (!isNaN(val)) {
                         totalIncl += val;
@@ -189,7 +201,7 @@
             const $wrapper = document.querySelector('#invoice-details');
             let index = $wrapper.dataset.index;
 
-            document.querySelector('#add-invoice-detail').addEventListener('click', function() {
+            document.querySelector('#add-invoice-detail').addEventListener('click', function () {
                 const prototype = $wrapper.dataset.prototype;
                 const newFormHtml = prototype.replace(/__name__/g, index);
 
@@ -223,7 +235,7 @@
 
                 $wrapper.appendChild($newFormTr);
 
-                $(`input[id$=invoice_invoiceDetails_${index}_quantity], input[id$=invoice_invoiceDetails_${index}_unitPriceExcl], input[id$=invoice_invoiceDetails_${index}_vatRate]`).change(function() {
+                $(`input[id$=invoice_invoiceDetails_${index}_quantity], input[id$=invoice_invoiceDetails_${index}_unitPriceExcl], input[id$=invoice_invoiceDetails_${index}_vatRate]`).change(function () {
                     let quantityInput = $(`input[id$=invoice_invoiceDetails_${index}_quantity]`);
                     let unitPriceInput = $(`input[id$=invoice_invoiceDetails_${index}_unitPriceExcl]`);
                     let vatRateInput = $(`input[id$=invoice_invoiceDetails_${index}_vatRate]`);
@@ -247,13 +259,14 @@
                 Array.from($newFormTr.querySelectorAll('input, select, textarea')).forEach((input) => {
                     input.classList.add('form-control');
                 });
-                $(`input[id$=invoice_invoiceDetails_${index}_totalExcl], input[id$=invoice_invoiceDetails_${index}_totalIncl]`).prop('readonly', true).addClass('border border-black');;
+                $(`input[id$=invoice_invoiceDetails_${index}_totalExcl], input[id$=invoice_invoiceDetails_${index}_totalIncl]`).prop('readonly', true).addClass('border border-black');
+                ;
 
                 index++;
                 $wrapper.dataset.index = index;
             });
 
-            $('#invoice-details').on('change', 'input[id$=_quantity], input[id$=_unitPriceExcl], input[id$=_vatRate]', function() {
+            $('#invoice-details').on('change', 'input[id$=_quantity], input[id$=_unitPriceExcl], input[id$=_vatRate]', function () {
                 let idParts = this.id.split('_');
                 let index = idParts[idParts.length - 2];
 
@@ -279,7 +292,7 @@
                 }
 
             });
-            $('#invoice-details').on('click', '.remove-invoice-detail', function(){
+            $('#invoice-details').on('click', '.remove-invoice-detail', function () {
                 $(this).parents('tr').remove();
                 recalculateTotalAmounts()
             });
@@ -287,4 +300,6 @@
             $('#invoice_client').change(fetchClientDetails);
         });
     </script>
+
 {% endblock %}
+
