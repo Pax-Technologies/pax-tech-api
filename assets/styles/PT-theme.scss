@@ -38,3 +38,36 @@ $primary: #00bc70;
   background-color: #5a6268; /* Couleur d'arrière-plan au survol */
   border-color: #545b62; /* Couleur de bordure au survol */
 }
+
+#sidebarMenu ul {
+  list-style-type: none;
+
+  li {
+    cursor: pointer;
+    margin-bottom: 10px;
+    margin-top: 10px;
+
+    > a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .dropdown-chevron::after {
+      content: "";
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 5px solid white;
+      display: inline-block;
+      margin-left: 5px;
+      transition: transform 0.3s ease;
+    }
+
+    &.open .dropdown-chevron::after {
+      transform: rotate(90deg);
+    }
+    &.logout-btn {
+      margin-top: 30px;
+    }
+  }
+
+}

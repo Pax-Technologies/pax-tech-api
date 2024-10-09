@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[524],{28:(e,a,r)=>{var n=r(692),s=r.n(n);r(336),r(668),r(194);r.g.$=r.g.jQuery=s(),s()(document).ready((function(){s()("#invoices-table").DataTable({order:[[1,"asc"]]})}))}},e=>{e.O(0,[345],(()=>{return a=28,e(e.s=a);var a}));e.O()}]);

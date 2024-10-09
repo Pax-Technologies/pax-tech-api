@@ -19,6 +19,7 @@ import 'datatables.net';
 import 'datatables.net-bs5';
 
 $(document).ready( function () {
-    $('#invoices-table').DataTable();
-
+    $('#invoices-table').DataTable({
+        "order": [[ 1, "asc" ]] // Trie la 2ème colonne en ordre croissant
+    });
 } );
