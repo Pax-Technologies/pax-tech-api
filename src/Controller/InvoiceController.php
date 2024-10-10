@@ -154,7 +154,31 @@ class InvoiceController extends AbstractController
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
 
+        // Stocker le PDF dans une variable pour envoi par email ou autre
+        $output = $dompdf->output();
+
+        $year = substr($invoice->getInvoiceNumber(), 0, 4);
+        $month = substr($invoice->getInvoiceNumber(), 4, 2);
+        // Chemin où vous souhaitez sauvegarder le PDF
+        $pdfDirectory = $this->getParameter('pdf_directory'); // Assurez-vous que ce paramètre est défini dans services.yaml
+
+// Créer le chemin du dossier basé sur l'année et le mois
+        $invoiceDirectory = $pdfDirectory . '/' . $year . '/' . $month;
+
+// Créer le répertoire si il n'existe pas
+        if (!file_exists($invoiceDirectory)) {
+            mkdir($invoiceDirectory, 0777, true);
+        }
+
+        // Remplacez les espaces dans le nom de l'entreprise par des tirets bas
+        $companyNameWithUnderscores = str_replace(' ', '_', $invoice->getClient()->getCompany());
+
+        $pdfFilePath = $invoiceDirectory . '/Facture_'  . $invoice->getInvoiceNumber(). '_' . $companyNameWithUnderscores . '.pdf';
+
+// Enregistrer le PDF sur le serveur
+        file_put_contents($pdfFilePath, $output);
+
         // Retourner le contenu du PDF
-        return $dompdf->output();
+        return $output;
     }
 }

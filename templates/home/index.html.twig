@@ -3,18 +3,50 @@
 {% block title %}Hello HomeController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container">
+        <h1>Console d'administration</h1>
+        <div class="row mt-4 d-flex justify-content-between">
+            <div class="col-md-5 col-12 card border-white">
+                <h4 class="card-header">Factures non envoyées</h4>
+                <div class="card-body">
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/Bryan/Developpements/pax-tech-api/src/Controller/HomeController.php</code></li>
-        <li>Your template at <code>C:/Users/Bryan/Developpements/pax-tech-api/templates/home/index.html.twig</code></li>
-    </ul>
-</div>
+                    {% for invoice in invoices %}
+                        <div class="row">
+                            <div class="col-6">{{ invoice.getClient().getCompany() }}</div>
+                            <div class="col-4">{{ invoice.getTotalAmountGross() }} €</div>
+                            <div class="col-1 text-center">
+                                <a class="link-underline link-underline-opacity-0"
+                                   href="{{ path('invoice_show', {id: invoice.id}) }}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                            <div class="col-1 text-center">
+                                <a class="link-underline link-underline-opacity-0"
+                                   href="{{ path('invoice_pdf', {id: invoice.id}) }}" target="_blank">
+                                    <i class="bi bi-file-pdf"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <a href="{{ path('invoices') }}" class="link-underline link-underline-opacity-0">Voir toutes les factures <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+            {# Formulaire d'envoi d'email de configuration #}
+            <div class="col-md-5 col-12 card border-white">
+                <h4 class="card-header">Envoyer les instructions pour les emails</h4>
+                <div class="card-body">
+                    <form id="email-form" action="{{ path('send_email_route') }}" method="post">
+                        <div class="form-group">
+                            <input type="email" name="email" class="form-control" placeholder="Adresse Email" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <button form="email-form" type="submit" class="btn btn-primary">Envoyer</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
