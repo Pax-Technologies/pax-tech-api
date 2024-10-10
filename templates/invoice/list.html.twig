@@ -4,103 +4,116 @@
 
 {% block body %}
 
-        <div class="container my-4">
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">
-                    {{ message }}
-                </div>
-            {% endfor %}
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-danger">
-                    {{ message }}
-                </div>
-            {% endfor %}
-            <h2 class="mb-4">Liste des factures</h2>
-            <div class="text-end">
-                <a type="button" class="btn btn-outline-primary mb-5" href="{{ path('create_invoice') }}">Nouvelle
-                    facture</a>
+    <div class="container my-4">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
             </div>
-            <table class="table table-striped" id="invoices-table">
-                <thead class="table-dark">
-                <tr class="border-white">
-                    <th>Nom de l'entreprise</th>
-                    <th>Numéro de facture</th>
-                    <th class="text-center">Détail</th>
-                    <th class="text-center">Voir le PDF</th>
-                    <th class="text-center">Email</th>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+        <h2 class="mb-4">Liste des factures</h2>
+        <div class="text-end">
+            <a type="button" class="btn btn-outline-primary mb-5" href="{{ path('create_invoice') }}">Nouvelle
+                facture</a>
+        </div>
+        <table class="table table-striped" id="invoices-table">
+            <thead class="table-dark">
+            <tr class="border-white">
+                <th class="col-6">Nom de l'entreprise</th>
+                <th class="text-center col-2">Numéro de facture</th>
+                <th class="text-center col-1">Status</th>
+                <th class="text-center col-3">Détail</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for invoice in invoices %}
+                <tr>
+                    <td class="text-white">{{ invoice.client.company }}</td>
+                    <td class="text-white text-center">{{ invoice.invoiceNumber }}</td>
+                    <td class="text-center">
+                        {% if invoice.status == 1 %}
+                            <i class="bi bi-check text-white"></i>
+                        {% elseif invoice.status == 2 %}
+                            <small class="text-secondary"><i class="bi bi-x"></i></small>
+                        {% else %}
+                            {{ invoice.status }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-end ms-5"> <!-- Add margin left to move all elements to right -->
+                            <div class="flex-fill">  <!-- Add margin right to each flex-fill div -->
+                                <a class="link-underline link-underline-opacity-0"
+                                   href="{{ path('invoice_show', {id: invoice.id}) }}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                            <div class="flex-fill me-2">  <!-- Add margin right to each flex-fill div -->
+                                <a class="link-underline link-underline-opacity-0"
+                                   href="{{ path('invoice_pdf', {id: invoice.id}) }}" target="_blank">
+                                    <i class="bi bi-file-pdf"></i>
+                                </a>
+                            </div>
+                            <div class="flex-fill">  <!-- Last element does not need right margin -->
+                                {% if invoice.emailSent %}
+                                    <i class="bi bi-check-lg text-secondary"></i><span class="text-secondary small">&nbsp; Envoyé</span>
+                                {% else %}
+                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#emailModal" data-id="{{ invoice.id }}"
+                                            data-email="{{ invoice.client.email }}">Envoyer
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
                 </tr>
-                </thead>
-                <tbody>
-                {% for invoice in invoices %}
-                    <tr>
-                        <td class="text-white">{{ invoice.client.company }}</td>
-                        <td class="text-white">{{ invoice.invoiceNumber }}</td>
-                        <td class="text-center">
-                            <a class="link-underline link-underline-opacity-0"
-                               href="{{ path('invoice_show', {id: invoice.id}) }}">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a class="link-underline link-underline-opacity-0"
-                               href="{{ path('invoice_pdf', {id: invoice.id}) }}" target="_blank">
-                                <i class="bi bi-file-pdf"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            {% if invoice.emailSent %}
-                                <i class="bi bi-check-lg text-secondary"></i><span class="text-secondary small">&nbsp; Envoyé</span>
-                            {% else %}
-                                <button class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#emailModal" data-id="{{ invoice.id }}"
-                                        data-email="{{ invoice.client.email }}">Envoyer par mail
-                                </button>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            {% endfor %}
+            </tbody>
+        </table>
 
-        </div>
+    </div>
 
-        <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="emailModalLabel">Envoyer la facture par email</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="successMessage" class="alert alert-success d-none"></div>
-                        <!-- Message de succès caché par défaut -->
-                        <div id="errorMessage" class="alert alert-danger d-none"></div>
-                        <!-- Message d'erreur caché par défaut -->
-                        <form id="sendEmailForm" method="post" action="{{ path('invoice_send') }}"
-                              class="needs-validation" novalidate>
-                            <div class="mb-3">
-                                {{ form_row(emailForm.to, {'attr': {'class': 'form-control'}}) }}
-                                <!-- Email du destinataire -->
-                            </div>
-                            <div class="mb-3">
-                                {{ form_row(emailForm.subject, {'attr': {'class': 'form-control'}}) }}
-                                <!-- Sujet de l'email -->
-                            </div>
-                            <div class="mb-3">
-                                {{ form_row(emailForm.message, {'attr': {'class': 'form-control'}}) }}
-                                <!-- Message -->
-                            </div>
-                            <input type="hidden" id="id" name="id" class="form-control" value="">
-                            {{ form_row(emailForm._token, {'attr': {'class': 'form-control'}}) }}
-                            <!-- CSRF Token -->
-                            <button type="submit" class="btn btn-success">Envoyer</button>
-                        </form>
-                    </div>
+    <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="emailModalLabel">Envoyer la facture par email</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="successMessage" class="alert alert-success d-none"></div>
+                    <!-- Message de succès caché par défaut -->
+                    <div id="errorMessage" class="alert alert-danger d-none"></div>
+                    <!-- Message d'erreur caché par défaut -->
+                    <form id="sendEmailForm" method="post" action="{{ path('invoice_send') }}"
+                          class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            {{ form_row(emailForm.to, {'attr': {'class': 'form-control'}}) }}
+                            <!-- Email du destinataire -->
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(emailForm.subject, {'attr': {'class': 'form-control'}}) }}
+                            <!-- Sujet de l'email -->
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(emailForm.message, {'attr': {'class': 'form-control'}}) }}
+                            <!-- Message -->
+                        </div>
+                        <input type="hidden" id="id" name="id" class="form-control" value="">
+                        {{ form_row(emailForm._token, {'attr': {'class': 'form-control'}}) }}
+                        <!-- CSRF Token -->
+                        <button type="submit" class="btn btn-success">Envoyer</button>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
 
 
 
