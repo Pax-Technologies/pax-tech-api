@@ -16,7 +16,7 @@
 
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
-        {#            {% block importmap %}{{ importmap('app') }}{% endblock %} #}
+{#        #}
         {#            Removed because it gave shit when deployed #}
     {% endblock %}
 </head>
@@ -65,6 +65,7 @@
             });
         });
     </script>
+
 </main>
 </body>
 </html>

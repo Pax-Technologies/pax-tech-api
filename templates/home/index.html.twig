@@ -3,13 +3,55 @@
 {% block title %}Hello HomeController!{% endblock %}
 
 {% block body %}
+    <style>
+
+        /*        .dropzone-placeholder {*/
+        /*            border: 2px dashed #007bff;*/
+        /*            padding: 20px;*/
+        /*            text-align: center;*/
+        /*            cursor: pointer;*/
+        /*            color: #007bff;*/
+        /*            font-weight: bold;*/
+        /*        }*/
+
+        /*        .dropzone-placeholder:hover {*/
+        /*            background-color: #f0f8ff;*/
+        /*        }*/
+
+        /*        .dropzone-preview {*/
+        /*            margin-top: 15px;*/
+        /*        }*/
+
+        /*        .dropzone-preview-image {*/
+        /*            max-width: 100%;*/
+        /*            height: auto;*/
+        /*            margin-bottom: 10px;*/
+        /*        }*/
+
+        /*        .dropzone-preview-filename {*/
+        /*            font-size: 14px;*/
+        /*            color: #333;*/
+        /*        }*/
+
+    </style>
     <div class="container">
+        {% for message in app.flashes('dropzone_success') %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert" data-turbo-cache="false">
+                {{ message|raw }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('dropzone_error') %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" data-turbo-cache="false">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
         <h1>Console d'administration</h1>
-        <div class="row mt-4 d-flex justify-content-between">
-            <div class="col-md-5 col-12 card border-white">
+        <div class="row d-flex justify-content-between">
+            <div class="col-lg-6 col-12 mt-4 card border-white">
                 <h4 class="card-header">Factures non envoyées</h4>
                 <div class="card-body">
-
                     {% for invoice in invoices %}
                         <div class="row">
                             <div class="col-6">{{ invoice.getClient().getCompany() }}</div>
@@ -30,11 +72,12 @@
                     {% endfor %}
                 </div>
                 <div class="card-footer d-flex justify-content-end">
-                    <a href="{{ path('invoices') }}" class="link-underline link-underline-opacity-0">Voir toutes les factures <i class="bi bi-arrow-right"></i></a>
+                    <a href="{{ path('invoices') }}" class="link-underline link-underline-opacity-0">Voir toutes les
+                        factures <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
             {# Formulaire d'envoi d'email de configuration #}
-            <div class="col-md-5 col-12 card border-white">
+            <div class="col-lg-5 col-12 mt-4 card border-white">
                 <h4 class="card-header">Envoyer les instructions pour les emails</h4>
                 <div class="card-body">
                     <form id="email-form" action="{{ path('send_email_route') }}" method="post">
@@ -48,5 +91,19 @@
                 </div>
             </div>
         </div>
+        <div class="row d-flex justify-content-end">
+            <div class="card col-lg-5 col-12 mt-4 border-white">
+                <h4 class="card-header">Uploader des codas</h4>
+                <div class="card-body">
+                    {{ form_start(upload_form) }}
+                    {{ form_widget(upload_form.file) }}
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Charger</button>
+                    {{ form_end(upload_form) }}
+                </div>
+            </div>
+        </div>
     </div>
+
 {% endblock %}
