@@ -16,6 +16,16 @@ class InvoiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Invoice::class);
     }
 
+    public function findUnsentInvoices(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.emailSent = :val')
+            ->setParameter('val', false)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 //    /**
 //     * @return Invoice[] Returns an array of Invoice objects
 //     */
