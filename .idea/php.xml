@@ -161,6 +161,7 @@
       <path value="$PROJECT_DIR$/vendor/knplabs/knp-menu" />
       <path value="$PROJECT_DIR$/vendor/knplabs/knp-menu-bundle" />
       <path value="$PROJECT_DIR$/vendor/symfony/ux-dropzone" />
+      <path value="$PROJECT_DIR$/vendor/codelicious/php-coda-parser" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

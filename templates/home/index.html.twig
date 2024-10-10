@@ -37,7 +37,7 @@
     <div class="container">
         {% for message in app.flashes('dropzone_success') %}
             <div class="alert alert-success alert-dismissible fade show" role="alert" data-turbo-cache="false">
-                {{ message }}
+                {{ message|raw }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}

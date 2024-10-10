@@ -7,7 +7,9 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-zip": "*",
         "api-platform/core": "^3.3",
+        "codelicious/php-coda-parser": "2.0",
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.13",
         "doctrine/doctrine-migrations-bundle": "^3.3",
@@ -52,8 +54,7 @@
         "symfony/yaml": "7.1.*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0",
-        "vich/uploader-bundle": "^2.4",
-      "ext-zip": "*"
+        "vich/uploader-bundle": "^2.4"
     },
     "config": {
         "allow-plugins": {
