@@ -65,9 +65,16 @@ $primary: #00bc70;
     &.open .dropdown-chevron::after {
       transform: rotate(90deg);
     }
+
     &.logout-btn {
       margin-top: 30px;
     }
   }
+}
 
+
+@media only screen and (max-width: 767px) {
+  html {
+    font-size: calc(1rem + 0.5vw) !important;
+  }
 }
