@@ -36,10 +36,25 @@ class InvoiceService
         $invoicesToBeCreated = [];
 
         foreach ($invoiceDetails as $invoiceDetail) {
-            $nextInvoiceDate = clone $invoiceDetail->getInvoice()->getDate();
-            if ($invoiceDetail->getPeriodicity() && $nextInvoiceDate->modify('+' . $invoiceDetail->getPeriodicity()) == new \DateTimeImmutable()) {
-                // Group invoice details by invoice ID
-                $invoicesToBeCreated[$invoiceDetail->getInvoice()->getId()][] = $invoiceDetail;
+            if ($invoiceDetail->getPeriodicity()) {
+                // Converts 'periodicity' to number of months
+                $periodParts = explode(' ', $invoiceDetail->getPeriodicity());
+                $periodicity = $periodParts[0];
+                if (isset($periodParts[1]) && $periodParts[1] === 'year') {
+                    $periodicity *= 12;
+                }
+
+                $invoiceDate = clone $invoiceDetail->getInvoice()->getDate();
+                $currentDate = new \DateTimeImmutable();
+
+                // Check if the difference in months between the invoice date and the current date
+                // is a multiple of the periodicity
+                $monthsDifference = $currentDate->diff($invoiceDate)->y * 12 + $currentDate->diff($invoiceDate)->m;
+
+                if ($monthsDifference % $periodicity === 0 && $invoiceDate->format('d') === $currentDate->format('d')) {
+                    // Group invoice details by invoice ID
+                    $invoicesToBeCreated[$invoiceDetail->getInvoice()->getId()][] = $invoiceDetail;
+                }
             }
         }
 
