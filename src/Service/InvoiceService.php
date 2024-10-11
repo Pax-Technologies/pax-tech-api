@@ -37,7 +37,7 @@ class InvoiceService
 
         foreach ($invoiceDetails as $invoiceDetail) {
             $nextInvoiceDate = clone $invoiceDetail->getInvoice()->getDate();
-            if ($invoiceDetail->getPeriodicity() && $nextInvoiceDate->modify('+' . $invoiceDetail->getPeriodicity()) <= new \DateTimeImmutable()) {
+            if ($invoiceDetail->getPeriodicity() && $nextInvoiceDate->modify('+' . $invoiceDetail->getPeriodicity()) == new \DateTimeImmutable()) {
                 // Group invoice details by invoice ID
                 $invoicesToBeCreated[$invoiceDetail->getInvoice()->getId()][] = $invoiceDetail;
             }
