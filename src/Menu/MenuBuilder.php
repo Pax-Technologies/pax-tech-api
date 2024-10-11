@@ -37,6 +37,11 @@ class MenuBuilder
 
         if (isset($options['include_invoices']) && $options['include_invoices']) {
 
+            $menu->addChild('Accueil', ['route' => 'app_home'])
+                ->setLabel('<i class="bi bi-house mr-2"></i>&nbsp; Accueil &nbsp;')
+// <i class="bi bi-chevron-right small"></i>
+                ->setExtras(['safe_label' => true]);
+
             $invoicesItem = $menu->addChild('invoices')
                 ->setLabel('<i class="bi bi-file-earmark-text mr-2"></i>&nbsp; Factures &nbsp;<span class="dropdown-chevron"></span>')
                 ->setExtras(['safe_label' => true])
