@@ -12,6 +12,7 @@ class UploadType extends AbstractType
     {
         $builder
             ->add('file', DropzoneType::class, [
+                'label' => false,
                 'attr' => [
                     'placeholder' => 'Drag and drop a file or click to browse',
                 ],

@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'Edit Blog' %}
+
+{% block body %}
+    <h1>Edit Blog</h1>
+
+    {{ form_start(form) }}
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-2">
+                {{ form_label(form.creation_date) }}
+                {{ form_widget(form.creation_date) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 mt-3">
+                {{ form_label(form.titleFR) }}
+                {{ form_widget(form.titleFR) }}
+            </div>
+            <div class="col-12 col-md-6 mt-3">
+                {{ form_label(form.titleEN) }}
+                {{ form_widget(form.titleEN) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 mt-3">
+                {{ form_label(form.subtitleFR) }}
+                {{ form_widget(form.subtitleFR) }}
+            </div>
+            <div class="col-12 col-md-6 mt-3">
+                {{ form_label(form.subtitleEN) }}
+                {{ form_widget(form.subtitleEN) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 mt-3">
+                {{ form_label(form.domainFR) }}
+                {{ form_widget(form.domainFR) }}
+            </div>
+            <div class="col-12 col-md-6 mt-3">
+                {{ form_label(form.domainEN) }}
+                {{ form_widget(form.domainEN) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 mt-3">
+                {{ form_label(form.contentFR) }}
+                {{ form_widget(form.contentFR) }}
+            </div>
+            <div class="col-12 col-md-6 mt-3">
+                {{ form_label(form.contentEN) }}
+                {{ form_widget(form.contentEN) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 mt-3">
+                {{ form_label(form.imageFile) }}
+                {{ form_widget(form.imageFile) }}
+            </div>
+            <div class="col-12 col-md-6 mt-3">
+                {{ form_label(form.source) }}
+                {{ form_widget(form.source) }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">Save Changes</button>
+    </div>
+    {{ form_end(form) }}
+
+    <a href="{{ path('blog_show', {'slug': blog.slug}) }}">Return to blog</a>
+    <a href="{{ path('blog_index') }}">Back to blog list</a>
+{% endblock %}

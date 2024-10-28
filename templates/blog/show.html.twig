@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title blog.titleEN %}
+
+{% block body %}
+    <h1>{{ blog.titleEN }}</h1>
+
+    <div>
+        {{ blog.contentEN | raw }}
+    </div>
+
+    <a href="{{ path('blog_index') }}">
+        Retour à la liste des blogs
+    </a>
+{% endblock %}

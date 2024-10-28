@@ -25,7 +25,7 @@ class HomeController extends AbstractController
         $uploadForm->handleRequest($request);
 
         if ($uploadForm->isSubmitted() && $uploadForm->isValid()) {
-            $uploadedFile = $uploadForm->get('file')->getData(); // Remplacez 'zipFile' par le nom de votre champ de fichier
+            $uploadedFile = $uploadForm->get('file')->getData();
 
             $zipFileRealPath = $uploadedFile->getRealPath();
             $zip = new \ZipArchive();

@@ -41,3 +41,5 @@ fos_ck_editor:
                           "Source",
                       ],
                 }
+    base_path: "build/ckeditor"
+    js_path: "build/ckeditor/ckeditor.js"

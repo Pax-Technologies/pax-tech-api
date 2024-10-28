@@ -230,25 +230,4 @@ class Blog
 
         return $this;
     }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function setSlugFromTitle(): void
-    {
-        $slug = $this->slugify($this->getTitleEN());
-        while (null !== $existingBlog = $this->getBlogRepository()->findOneBy(['slug' => $slug])) {
-            if ($existingBlog === $this) {
-                break;
-            }
-            $slug .= '-' . uniqid();
-        }
-        $this->slug = $slug;
-    }
-
-    private function slugify(string $string): string
-    {
-        return strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $string), '-'));
-    }
 }
