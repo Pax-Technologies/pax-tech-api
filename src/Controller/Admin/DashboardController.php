@@ -61,6 +61,37 @@ class DashboardController extends AbstractDashboardController
         return $this->redirectToRoute('admin'); // Rediriger vers le dashboard
     }
 
+    #[Route('/api/send-email-endpoint', name: 'send_email_endpoint', methods: ['POST'])]
+    public function sendEmailEndPoint(Request $request, MailerInterface $mailer): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $emailAddress = $data['email'];
+        $name = $data['name'];
+        $message = $data['message'];
+
+
+        // Créer le contenu HTML
+        $htmlContent = $this->renderView('emails/template_website_form.html.twig', [
+            'name' => $name,
+            'email' =>  $emailAddress,
+            'message' => $message,
+        ]);
+
+        // Créer et envoyer l'email
+        $email = (new Email())
+            ->from('support@pax-tech.com')
+            ->to('bryan.paques@pax-tech.com')
+            ->subject('Message de '.$name.' - '.$emailAddress)
+            ->html($htmlContent);
+
+        $mailer->send($email);
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Email envoyé avec succès'
+        ]);
+    }
+
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
