@@ -24,7 +24,7 @@ class InvoiceDetail
     private ?float $unitPriceExcl = null;
 
     #[ORM\Column]
-    private ?int $quantity = null;
+    private ?float $quantity = null;
 
     #[ORM\Column]
     private ?float $totalExcl = null;
@@ -79,12 +79,12 @@ class InvoiceDetail
         return $this;
     }
 
-    public function getQuantity(): ?int
+    public function getQuantity(): ?float
     {
         return $this->quantity;
     }
 
-    public function setQuantity(int $quantity): static
+    public function setQuantity(float $quantity): static
     {
         $this->quantity = $quantity;
 
